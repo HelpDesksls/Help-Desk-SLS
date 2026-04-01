@@ -40,6 +40,36 @@
       color: #64748b;
     }
 
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .admin-painel {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .admin-status {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .admin-status.on {
+      background: #dcfce7;
+      color: #166534;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -74,6 +104,10 @@
 
     .btn-sec {
       background: #475569;
+    }
+
+    .btn-alerta {
+      background: #b45309;
     }
 
     .acoes-topo {
@@ -117,11 +151,39 @@
       color: #1d4ed8;
     }
 
+    .badge.status-aguardando {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .badge.status-encaminhado {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .badge.status-andamento {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .badge.status-finalizado {
+      background: #dcfce7;
+      color: #166534;
+    }
+
     .admin-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 12px;
+    }
+
+    .admin-bloco {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #dbe4ee;
     }
 
     .msg {
@@ -153,6 +215,10 @@
       border: 1px solid #e2e8f0;
     }
 
+    .oculto {
+      display: none;
+    }
+
     @media (max-width: 750px) {
       .grid,
       .admin-grid {
@@ -171,8 +237,18 @@
 </head>
 <body>
   <div class="container">
-    <h1>🛠️ HelpDesk Interno</h1>
-    <div class="muted">Registro e acompanhamento de chamados</div>
+    <div class="topbar">
+      <div>
+        <h1>🛠️ HelpDesk Interno</h1>
+        <div class="muted">Registro e acompanhamento de chamados</div>
+      </div>
+
+      <div class="admin-painel">
+        <div id="adminStatus" class="admin-status">Modo usuário</div>
+        <button id="btnEntrarAdmin" type="button">🔐 Entrar como admin</button>
+        <button id="btnSairAdmin" type="button" class="btn-sec oculto">🚪 Sair do admin</button>
+      </div>
+    </div>
 
     <div id="mensagem"></div>
 
@@ -246,10 +322,14 @@
     const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
     const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
 
+    // Troque pela senha que você quiser
+    const ADMIN_PASSWORD = '123456'
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
     const $ = (id) => document.getElementById(id)
     let chamados = []
+    let adminMode = localStorage.getItem('helpdesk_admin_mode') === 'true'
 
     function mostrarMensagem(texto, tipo = 'ok') {
       const box = $('mensagem')
@@ -276,6 +356,56 @@
     function formatarData(data) {
       if (!data) return '-'
       return new Date(data).toLocaleString('pt-BR')
+    }
+
+    function classeStatus(status) {
+      if (status === 'Aguardando triagem') return 'status-aguardando'
+      if (status === 'Encaminhado') return 'status-encaminhado'
+      if (status === 'Em andamento') return 'status-andamento'
+      if (status === 'Finalizado') return 'status-finalizado'
+      return ''
+    }
+
+    function atualizarInterfaceAdmin() {
+      const status = $('adminStatus')
+      const btnEntrar = $('btnEntrarAdmin')
+      const btnSair = $('btnSairAdmin')
+
+      if (adminMode) {
+        status.textContent = 'Modo administrador'
+        status.classList.add('on')
+        btnEntrar.classList.add('oculto')
+        btnSair.classList.remove('oculto')
+      } else {
+        status.textContent = 'Modo usuário'
+        status.classList.remove('on')
+        btnEntrar.classList.remove('oculto')
+        btnSair.classList.add('oculto')
+      }
+
+      renderChamados()
+    }
+
+    function entrarAdmin() {
+      const senha = prompt('Digite a senha do administrador:')
+      if (senha === null) return
+
+      if (senha !== ADMIN_PASSWORD) {
+        mostrarMensagem('Senha de administrador incorreta.', 'erro')
+        return
+      }
+
+      adminMode = true
+      localStorage.setItem('helpdesk_admin_mode', 'true')
+      atualizarInterfaceAdmin()
+      mostrarMensagem('Modo administrador ativado.', 'ok')
+    }
+
+    function sairAdmin() {
+      adminMode = false
+      localStorage.removeItem('helpdesk_admin_mode')
+      atualizarInterfaceAdmin()
+      mostrarMensagem('Modo administrador encerrado.', 'ok')
     }
 
     async function abrirChamado() {
@@ -377,37 +507,46 @@
           <div class="linha">🏢 Setor responsável: ${escapeHtml(c.setor_responsavel || 'Não definido')}</div>
           <div class="linha">🕒 ${escapeHtml(formatarData(c.created_at))}</div>
 
-          <div class="badge">${escapeHtml(c.status || '-')}</div>
+          <div class="badge ${classeStatus(c.status)}">${escapeHtml(c.status || '-')}</div>
 
-          <div class="admin-grid">
-            <div>
-              <label>Setor responsável</label>
-              <select onchange="alterarSetor('${c.id}', this.value)">
-                <option value="" ${!c.setor_responsavel ? 'selected' : ''}>Não definido</option>
-                <option value="B1" ${c.setor_responsavel === 'B1' ? 'selected' : ''}>B1</option>
-                <option value="B2" ${c.setor_responsavel === 'B2' ? 'selected' : ''}>B2</option>
-                <option value="B3" ${c.setor_responsavel === 'B3' ? 'selected' : ''}>B3</option>
-                <option value="B4" ${c.setor_responsavel === 'B4' ? 'selected' : ''}>B4</option>
-                <option value="B5" ${c.setor_responsavel === 'B5' ? 'selected' : ''}>B5</option>
-                <option value="Sseg" ${c.setor_responsavel === 'Sseg' ? 'selected' : ''}>Sseg</option>
-              </select>
-            </div>
+          ${adminMode ? `
+            <div class="admin-bloco">
+              <div class="admin-grid">
+                <div>
+                  <label>Setor responsável</label>
+                  <select onchange="alterarSetor('${c.id}', this.value)">
+                    <option value="" ${!c.setor_responsavel ? 'selected' : ''}>Não definido</option>
+                    <option value="B1" ${c.setor_responsavel === 'B1' ? 'selected' : ''}>B1</option>
+                    <option value="B2" ${c.setor_responsavel === 'B2' ? 'selected' : ''}>B2</option>
+                    <option value="B3" ${c.setor_responsavel === 'B3' ? 'selected' : ''}>B3</option>
+                    <option value="B4" ${c.setor_responsavel === 'B4' ? 'selected' : ''}>B4</option>
+                    <option value="B5" ${c.setor_responsavel === 'B5' ? 'selected' : ''}>B5</option>
+                    <option value="Sseg" ${c.setor_responsavel === 'Sseg' ? 'selected' : ''}>Sseg</option>
+                  </select>
+                </div>
 
-            <div>
-              <label>Status</label>
-              <select onchange="alterarStatus('${c.id}', this.value)">
-                <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
-                <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
-                <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-              </select>
+                <div>
+                  <label>Status</label>
+                  <select onchange="alterarStatus('${c.id}', this.value)">
+                    <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
+                    <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
+                    <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                    <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
+          ` : ''}
         </div>
       `).join('')
     }
 
     async function alterarSetor(id, setor) {
+      if (!adminMode) {
+        mostrarMensagem('Somente administrador pode alterar o setor.', 'erro')
+        return
+      }
+
       try {
         const { error } = await supabase
           .from('chamados')
@@ -429,6 +568,11 @@
     }
 
     async function alterarStatus(id, status) {
+      if (!adminMode) {
+        mostrarMensagem('Somente administrador pode alterar o status.', 'erro')
+        return
+      }
+
       try {
         const { error } = await supabase
           .from('chamados')
@@ -460,10 +604,13 @@
     $('btnLimpar').addEventListener('click', limparFormulario)
     $('busca').addEventListener('input', renderChamados)
     $('filtroStatus').addEventListener('change', renderChamados)
+    $('btnEntrarAdmin').addEventListener('click', entrarAdmin)
+    $('btnSairAdmin').addEventListener('click', sairAdmin)
 
     window.alterarSetor = alterarSetor
     window.alterarStatus = alterarStatus
 
+    atualizarInterfaceAdmin()
     carregarChamados()
   </script>
 </body>
