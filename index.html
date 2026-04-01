@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HelpDesk Interno</title>
   <style>
     * {
@@ -10,43 +10,64 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
+    :root {
+      --bg: #eef3f8;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-2: #1565a9;
+      --border: #dbe4ee;
+      --soft: #f8fafc;
+      --success-bg: #dcfce7;
+      --success-tx: #166534;
+      --error-bg: #fee2e2;
+      --error-tx: #991b1b;
+      --warning-bg: #fef3c7;
+      --warning-tx: #92400e;
+      --info-bg: #dbeafe;
+      --info-tx: #1d4ed8;
+      --gray-bg: #e2e8f0;
+      --gray-tx: #334155;
+    }
+
     body {
       margin: 0;
       padding: 20px;
-      background: #eef2f7;
-      color: #1f2937;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .container {
-      max-width: 1100px;
-      margin: auto;
-      background: #fff;
-      border-radius: 18px;
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      border-radius: 22px;
       padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+      margin-bottom: 18px;
     }
 
-    h1 {
-      margin: 0 0 6px;
-      color: #0f4c81;
-    }
-
-    h2 {
-      margin-top: 26px;
-      color: #0f4c81;
-    }
-
-    .muted {
-      color: #64748b;
-    }
-
-    .topbar {
+    .hero-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      align-items: flex-start;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
     }
 
     .admin-painel {
@@ -56,50 +77,97 @@
       flex-wrap: wrap;
     }
 
-    .admin-status {
-      padding: 8px 12px;
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: bold;
-      background: #e2e8f0;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.24);
+      backdrop-filter: blur(6px);
+    }
+
+    .pill.on {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(255,255,255,0.28);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(15, 76, 129, 0.08);
+      border: 1px solid #edf2f7;
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      color: var(--primary);
+      font-size: 22px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: -4px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: bold;
+      font-size: 14px;
       color: #334155;
     }
 
-    .admin-status.on {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    input, textarea, select, button {
+    input,
+    textarea,
+    select,
+    button {
       width: 100%;
-      margin-top: 8px;
-      padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid #cbd5e1;
+      padding: 11px 12px;
       font-size: 14px;
+      background: #fff;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(21, 101, 169, 0.13);
     }
 
     textarea {
-      min-height: 95px;
+      min-height: 110px;
       resize: vertical;
     }
 
     button {
-      border: none;
-      background: #0f4c81;
-      color: white;
+      border: 0;
+      background: var(--primary);
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
     button:hover {
-      opacity: 0.96;
+      transform: translateY(-1px);
+      opacity: 0.98;
     }
 
     .btn-sec {
@@ -110,210 +178,388 @@
       background: #b45309;
     }
 
-    .acoes-topo {
+    .btn-ghost {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
       flex-wrap: wrap;
+      margin-top: 14px;
     }
 
-    .acoes-topo button {
+    .actions button {
       width: auto;
-      min-width: 160px;
+      min-width: 150px;
     }
 
-    .card {
-      background: #f8fafc;
-      border-radius: 14px;
+    .msg {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .msg.ok {
+      display: block;
+      background: var(--success-bg);
+      color: var(--success-tx);
+      border: 1px solid #86efac;
+    }
+
+    .msg.erro {
+      display: block;
+      background: var(--error-bg);
+      color: var(--error-tx);
+      border: 1px solid #fca5a5;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       padding: 14px;
+      text-align: center;
+    }
+
+    .stat .num {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat .lab {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .ticket {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
       margin-top: 12px;
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 6px 18px rgba(15, 76, 129, 0.05);
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .ticket-title {
       font-size: 20px;
       font-weight: bold;
-      margin-bottom: 8px;
+      color: #0f172a;
+      margin-bottom: 4px;
     }
 
-    .linha {
-      margin-top: 6px;
+    .ticket-meta-head {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .badge {
-      display: inline-block;
-      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 7px 10px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: bold;
-      margin-top: 10px;
-      background: #dbeafe;
-      color: #1d4ed8;
+      white-space: nowrap;
     }
 
-    .badge.status-aguardando {
-      background: #e0f2fe;
+    .st-aguardando {
+      background: var(--info-bg);
       color: #0369a1;
     }
 
-    .badge.status-encaminhado {
-      background: #fef3c7;
-      color: #b45309;
+    .st-encaminhado {
+      background: var(--warning-bg);
+      color: var(--warning-tx);
     }
 
-    .badge.status-andamento {
-      background: #dbeafe;
-      color: #1d4ed8;
+    .st-andamento {
+      background: #ede9fe;
+      color: #6d28d9;
     }
 
-    .badge.status-finalizado {
-      background: #dcfce7;
-      color: #166534;
+    .st-finalizado {
+      background: var(--success-bg);
+      color: var(--success-tx);
+    }
+
+    .pr-baixa {
+      background: var(--gray-bg);
+      color: var(--gray-tx);
+    }
+
+    .pr-media {
+      background: #fde68a;
+      color: #92400e;
+    }
+
+    .pr-alta {
+      background: #fecaca;
+      color: #b91c1c;
+    }
+
+    .ticket-desc {
+      margin-top: 8px;
+      color: #334155;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .meta-item {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .meta-item small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .meta-item strong {
+      font-size: 14px;
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .admin-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px dashed #cbd5e1;
     }
 
     .admin-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 12px;
     }
 
-    .admin-bloco {
+    .empty {
       margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #fff;
-      border: 1px solid #dbe4ee;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
     }
 
-    .msg {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 10px;
+    .hidden {
       display: none;
     }
 
-    .msg.ok {
-      display: block;
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #86efac;
-    }
-
-    .msg.erro {
-      display: block;
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-    }
-
-    .sem-registros {
-      margin-top: 12px;
-      padding: 14px;
-      border-radius: 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-    }
-
-    .oculto {
-      display: none;
-    }
-
-    @media (max-width: 750px) {
-      .grid,
-      .admin-grid {
+    @media (max-width: 1080px) {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .acoes-topo {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      .grid-2,
+      .toolbar,
+      .meta-grid,
+      .admin-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
         flex-direction: column;
       }
 
-      .acoes-topo button {
+      .actions button {
         width: 100%;
+      }
+
+      .hero h1 {
+        font-size: 26px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="topbar">
-      <div>
-        <h1>🛠️ HelpDesk Interno</h1>
-        <div class="muted">Registro e acompanhamento de chamados</div>
-      </div>
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>🛠️ HelpDesk Interno</h1>
+          <p>Registro, triagem e acompanhamento de chamados internos</p>
+        </div>
 
-      <div class="admin-painel">
-        <div id="adminStatus" class="admin-status">Modo usuário</div>
-        <button id="btnEntrarAdmin" type="button">🔐 Entrar como admin</button>
-        <button id="btnSairAdmin" type="button" class="btn-sec oculto">🚪 Sair do admin</button>
-      </div>
-    </div>
-
-    <div id="mensagem"></div>
-
-    <h2>👤 Identificação</h2>
-    <div class="grid">
-      <div>
-        <label for="nome">Nome</label>
-        <input id="nome" placeholder="Digite seu nome">
-      </div>
-      <div>
-        <label for="matricula">Matrícula</label>
-        <input id="matricula" placeholder="Digite sua matrícula">
+        <div class="admin-painel">
+          <div id="adminStatus" class="pill">👤 Modo usuário</div>
+          <button id="btnEntrarAdmin" type="button">🔐 Entrar como admin</button>
+          <button id="btnSairAdmin" type="button" class="btn-sec hidden">🚪 Sair do admin</button>
+        </div>
       </div>
     </div>
 
-    <h2>📋 Abrir chamado</h2>
+    <div id="mensagem" class="msg"></div>
 
-    <label for="titulo">Título</label>
-    <input id="titulo" placeholder="Título do chamado">
+    <div class="layout">
+      <div class="card">
+        <h2>👤 Identificação</h2>
+        <div class="sub">Informe os dados do solicitante antes de abrir o chamado.</div>
 
-    <label for="descricao">Descrição</label>
-    <textarea id="descricao" placeholder="Descrição do problema"></textarea>
+        <div class="grid-2">
+          <div>
+            <label for="nome">Nome</label>
+            <input id="nome" placeholder="Digite seu nome">
+          </div>
+          <div>
+            <label for="matricula">Matrícula</label>
+            <input id="matricula" placeholder="Digite sua matrícula">
+          </div>
+        </div>
 
-    <div class="grid">
-      <div>
-        <label for="local">Local</label>
-        <input id="local" placeholder="Local">
+        <h2>📋 Abrir chamado</h2>
+
+        <label for="titulo">Título</label>
+        <input id="titulo" placeholder="Ex: Torneira da cozinha não fecha">
+
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" placeholder="Descreva o problema com detalhes"></textarea>
+
+        <div class="grid-2">
+          <div>
+            <label for="local">Local</label>
+            <input id="local" placeholder="Ex: Cozinha, Sala 2, Corredor">
+          </div>
+          <div>
+            <label for="prioridade">Prioridade</label>
+            <select id="prioridade">
+              <option value="Baixa">Baixa</option>
+              <option value="Média" selected>Média</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="btnAbrir">Registrar chamado</button>
+          <button id="btnLimpar" type="button" class="btn-ghost">Limpar</button>
+        </div>
       </div>
-      <div>
-        <label for="prioridade">Prioridade</label>
-        <select id="prioridade">
-          <option value="Baixa">Baixa</option>
-          <option value="Média" selected>Média</option>
-          <option value="Alta">Alta</option>
-        </select>
+
+      <div class="card">
+        <h2>📊 Painel de chamados</h2>
+        <div class="sub">Acompanhe os registros e filtre rapidamente.</div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="num" id="stTotal">0</div>
+            <div class="lab">Total</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="stAguardando">0</div>
+            <div class="lab">Aguardando</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="stEncaminhado">0</div>
+            <div class="lab">Encaminhado</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="stAndamento">0</div>
+            <div class="lab">Em andamento</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="stFinalizado">0</div>
+            <div class="lab">Finalizado</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input id="busca" placeholder="Buscar por título, descrição, nome, matrícula, local">
+          <select id="filtroStatus">
+            <option value="">Todos os status</option>
+            <option value="Aguardando triagem">Aguardando triagem</option>
+            <option value="Encaminhado">Encaminhado</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+          <select id="filtroSetor">
+            <option value="">Todos os setores</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="B3">B3</option>
+            <option value="B4">B4</option>
+            <option value="B5">B5</option>
+            <option value="Sseg">Sseg</option>
+          </select>
+        </div>
+
+        <div id="lista"></div>
       </div>
     </div>
-
-    <div class="acoes-topo">
-      <button id="btnAbrir">Registrar chamado</button>
-      <button id="btnLimpar" class="btn-sec" type="button">Limpar</button>
-    </div>
-
-    <hr style="margin: 28px 0; border: 0; border-top: 1px solid #e5e7eb;">
-
-    <h2>📂 Chamados</h2>
-
-    <div class="grid">
-      <div>
-        <label for="busca">Buscar</label>
-        <input id="busca" placeholder="Buscar por título, descrição, nome, matrícula, local">
-      </div>
-      <div>
-        <label for="filtroStatus">Filtrar por status</label>
-        <select id="filtroStatus">
-          <option value="">Todos</option>
-          <option value="Aguardando triagem">Aguardando triagem</option>
-          <option value="Encaminhado">Encaminhado</option>
-          <option value="Em andamento">Em andamento</option>
-          <option value="Finalizado">Finalizado</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="lista"></div>
   </div>
 
   <script type="module">
@@ -322,30 +568,32 @@
     const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
     const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
 
-    // Troque pela senha que você quiser
+    // Troque pela senha desejada
     const ADMIN_PASSWORD = '123456'
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
     const $ = (id) => document.getElementById(id)
+
     let chamados = []
     let adminMode = localStorage.getItem('helpdesk_admin_mode') === 'true'
 
-    function mostrarMensagem(texto, tipo = 'ok') {
+    function showMessage(text, type = 'ok') {
       const box = $('mensagem')
-      box.className = `msg ${tipo}`
-      box.textContent = texto
+      box.className = `msg ${type}`
+      box.textContent = text
       box.style.display = 'block'
 
-      setTimeout(() => {
+      clearTimeout(window.__helpdeskMsgTimer)
+      window.__helpdeskMsgTimer = setTimeout(() => {
         box.style.display = 'none'
         box.className = 'msg'
         box.textContent = ''
       }, 4000)
     }
 
-    function escapeHtml(texto) {
-      return String(texto ?? '')
+    function escapeHtml(text) {
+      return String(text ?? '')
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
@@ -353,62 +601,69 @@
         .replaceAll("'", '&#039;')
     }
 
-    function formatarData(data) {
-      if (!data) return '-'
-      return new Date(data).toLocaleString('pt-BR')
+    function formatDate(value) {
+      if (!value) return '-'
+      return new Date(value).toLocaleString('pt-BR')
     }
 
-    function classeStatus(status) {
-      if (status === 'Aguardando triagem') return 'status-aguardando'
-      if (status === 'Encaminhado') return 'status-encaminhado'
-      if (status === 'Em andamento') return 'status-andamento'
-      if (status === 'Finalizado') return 'status-finalizado'
+    function statusClass(status) {
+      if (status === 'Aguardando triagem') return 'st-aguardando'
+      if (status === 'Encaminhado') return 'st-encaminhado'
+      if (status === 'Em andamento') return 'st-andamento'
+      if (status === 'Finalizado') return 'st-finalizado'
       return ''
     }
 
-    function atualizarInterfaceAdmin() {
-      const status = $('adminStatus')
-      const btnEntrar = $('btnEntrarAdmin')
-      const btnSair = $('btnSairAdmin')
-
-      if (adminMode) {
-        status.textContent = 'Modo administrador'
-        status.classList.add('on')
-        btnEntrar.classList.add('oculto')
-        btnSair.classList.remove('oculto')
-      } else {
-        status.textContent = 'Modo usuário'
-        status.classList.remove('on')
-        btnEntrar.classList.remove('oculto')
-        btnSair.classList.add('oculto')
-      }
-
-      renderChamados()
+    function priorityClass(priority) {
+      if (priority === 'Baixa') return 'pr-baixa'
+      if (priority === 'Média') return 'pr-media'
+      if (priority === 'Alta') return 'pr-alta'
+      return ''
     }
 
-    function entrarAdmin() {
-      const senha = prompt('Digite a senha do administrador:')
-      if (senha === null) return
+    function updateAdminUI() {
+      const status = $('adminStatus')
+      const enterBtn = $('btnEntrarAdmin')
+      const exitBtn = $('btnSairAdmin')
 
-      if (senha !== ADMIN_PASSWORD) {
-        mostrarMensagem('Senha de administrador incorreta.', 'erro')
+      if (adminMode) {
+        status.textContent = '🛡️ Modo administrador'
+        status.classList.add('on')
+        enterBtn.classList.add('hidden')
+        exitBtn.classList.remove('hidden')
+      } else {
+        status.textContent = '👤 Modo usuário'
+        status.classList.remove('on')
+        enterBtn.classList.remove('hidden')
+        exitBtn.classList.add('hidden')
+      }
+
+      renderTickets()
+    }
+
+    function enterAdminMode() {
+      const password = prompt('Digite a senha do administrador:')
+      if (password === null) return
+
+      if (password !== ADMIN_PASSWORD) {
+        showMessage('Senha de administrador incorreta.', 'erro')
         return
       }
 
       adminMode = true
       localStorage.setItem('helpdesk_admin_mode', 'true')
-      atualizarInterfaceAdmin()
-      mostrarMensagem('Modo administrador ativado.', 'ok')
+      updateAdminUI()
+      showMessage('Modo administrador ativado.', 'ok')
     }
 
-    function sairAdmin() {
+    function exitAdminMode() {
       adminMode = false
       localStorage.removeItem('helpdesk_admin_mode')
-      atualizarInterfaceAdmin()
-      mostrarMensagem('Modo administrador encerrado.', 'ok')
+      updateAdminUI()
+      showMessage('Modo administrador encerrado.', 'ok')
     }
 
-    async function abrirChamado() {
+    async function createTicket() {
       const nome = $('nome').value.trim()
       const matricula = $('matricula').value.trim()
       const titulo = $('titulo').value.trim()
@@ -417,7 +672,7 @@
       const prioridade = $('prioridade').value
 
       if (!nome || !matricula || !titulo) {
-        mostrarMensagem('Preencha nome, matrícula e título.', 'erro')
+        showMessage('Preencha nome, matrícula e título.', 'erro')
         return
       }
 
@@ -436,20 +691,20 @@
 
         if (error) {
           console.error('Erro insert:', error)
-          mostrarMensagem('Erro ao registrar chamado: ' + error.message, 'erro')
+          showMessage('Erro ao registrar chamado: ' + error.message, 'erro')
           return
         }
 
-        limparFormulario()
-        await carregarChamados()
-        mostrarMensagem('Chamado registrado com sucesso.', 'ok')
+        clearForm()
+        await loadTickets()
+        showMessage('Chamado registrado com sucesso.', 'ok')
       } catch (e) {
         console.error('Erro conexão insert:', e)
-        mostrarMensagem('Erro de conexão ao registrar chamado.', 'erro')
+        showMessage('Erro de conexão ao registrar chamado.', 'erro')
       }
     }
 
-    async function carregarChamados() {
+    async function loadTickets() {
       try {
         const { data, error } = await supabase
           .from('chamados')
@@ -458,59 +713,99 @@
 
         if (error) {
           console.error('Erro select:', error)
-          $('lista').innerHTML = `<div class="sem-registros">Erro ao carregar chamados: ${escapeHtml(error.message)}</div>`
+          $('lista').innerHTML = `<div class="empty">Erro ao carregar chamados: ${escapeHtml(error.message)}</div>`
           return
         }
 
         chamados = data || []
-        renderChamados()
+        updateStats()
+        renderTickets()
       } catch (e) {
         console.error('Erro conexão select:', e)
-        $('lista').innerHTML = `<div class="sem-registros">Erro de conexão ao carregar chamados.</div>`
+        $('lista').innerHTML = `<div class="empty">Erro de conexão ao carregar chamados.</div>`
       }
     }
 
-    function renderChamados() {
-      const busca = $('busca').value.trim().toLowerCase()
-      const filtroStatus = $('filtroStatus').value
+    function updateStats() {
+      const total = chamados.length
+      const aguardando = chamados.filter(c => c.status === 'Aguardando triagem').length
+      const encaminhado = chamados.filter(c => c.status === 'Encaminhado').length
+      const andamento = chamados.filter(c => c.status === 'Em andamento').length
+      const finalizado = chamados.filter(c => c.status === 'Finalizado').length
 
-      const filtrados = chamados.filter(c => {
-        const texto = [
+      $('stTotal').textContent = total
+      $('stAguardando').textContent = aguardando
+      $('stEncaminhado').textContent = encaminhado
+      $('stAndamento').textContent = andamento
+      $('stFinalizado').textContent = finalizado
+    }
+
+    function renderTickets() {
+      const search = $('busca').value.trim().toLowerCase()
+      const statusFilter = $('filtroStatus').value
+      const setorFilter = $('filtroSetor').value
+
+      const filtered = chamados.filter(c => {
+        const haystack = [
           c.titulo,
           c.descricao,
           c.nome_solicitante,
           c.matricula_solicitante,
           c.local,
           c.setor_responsavel,
-          c.status
+          c.status,
+          c.prioridade
         ].join(' ').toLowerCase()
 
-        const okBusca = !busca || texto.includes(busca)
-        const okStatus = !filtroStatus || c.status === filtroStatus
+        const okSearch = !search || haystack.includes(search)
+        const okStatus = !statusFilter || c.status === statusFilter
+        const okSetor = !setorFilter || c.setor_responsavel === setorFilter
 
-        return okBusca && okStatus
+        return okSearch && okStatus && okSetor
       })
 
-      if (!filtrados.length) {
-        $('lista').innerHTML = `<div class="sem-registros">Nenhum chamado encontrado.</div>`
+      if (!filtered.length) {
+        $('lista').innerHTML = `<div class="empty">Nenhum chamado encontrado.</div>`
         return
       }
 
-      $('lista').innerHTML = filtrados.map(c => `
-        <div class="card">
-          <div class="ticket-title">${escapeHtml(c.titulo)}</div>
+      $('lista').innerHTML = filtered.map(c => `
+        <div class="ticket">
+          <div class="ticket-top">
+            <div>
+              <div class="ticket-title">${escapeHtml(c.titulo)}</div>
+              <div class="ticket-meta-head">Chamado registrado em ${escapeHtml(formatDate(c.created_at))}</div>
+            </div>
 
-          <div class="linha">${escapeHtml(c.descricao || '')}</div>
-          <div class="linha">📍 ${escapeHtml(c.local || '-')}</div>
-          <div class="linha">👤 ${escapeHtml(c.nome_solicitante)} (${escapeHtml(c.matricula_solicitante)})</div>
-          <div class="linha">⚡ ${escapeHtml(c.prioridade || '-')}</div>
-          <div class="linha">🏢 Setor responsável: ${escapeHtml(c.setor_responsavel || 'Não definido')}</div>
-          <div class="linha">🕒 ${escapeHtml(formatarData(c.created_at))}</div>
+            <div class="badges">
+              <span class="badge ${statusClass(c.status)}">📌 ${escapeHtml(c.status || '-')}</span>
+              <span class="badge ${priorityClass(c.prioridade)}">⚡ ${escapeHtml(c.prioridade || '-')}</span>
+            </div>
+          </div>
 
-          <div class="badge ${classeStatus(c.status)}">${escapeHtml(c.status || '-')}</div>
+          <div class="ticket-desc">${escapeHtml(c.descricao || '')}</div>
+
+          <div class="meta-grid">
+            <div class="meta-item">
+              <small>Solicitante</small>
+              <strong>${escapeHtml(c.nome_solicitante || '-')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Matrícula</small>
+              <strong>${escapeHtml(c.matricula_solicitante || '-')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Local</small>
+              <strong>${escapeHtml(c.local || '-')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Setor responsável</small>
+              <strong>${escapeHtml(c.setor_responsavel || 'Não definido')}</strong>
+            </div>
+          </div>
 
           ${adminMode ? `
-            <div class="admin-bloco">
+            <div class="admin-box">
               <div class="admin-grid">
                 <div>
                   <label>Setor responsável</label>
@@ -543,7 +838,7 @@
 
     async function alterarSetor(id, setor) {
       if (!adminMode) {
-        mostrarMensagem('Somente administrador pode alterar o setor.', 'erro')
+        showMessage('Somente administrador pode alterar o setor.', 'erro')
         return
       }
 
@@ -555,21 +850,21 @@
 
         if (error) {
           console.error('Erro update setor:', error)
-          mostrarMensagem('Erro ao atualizar setor: ' + error.message, 'erro')
+          showMessage('Erro ao atualizar setor: ' + error.message, 'erro')
           return
         }
 
-        await carregarChamados()
-        mostrarMensagem('Setor atualizado com sucesso.', 'ok')
+        await loadTickets()
+        showMessage('Setor atualizado com sucesso.', 'ok')
       } catch (e) {
         console.error('Erro conexão setor:', e)
-        mostrarMensagem('Erro de conexão ao atualizar setor.', 'erro')
+        showMessage('Erro de conexão ao atualizar setor.', 'erro')
       }
     }
 
     async function alterarStatus(id, status) {
       if (!adminMode) {
-        mostrarMensagem('Somente administrador pode alterar o status.', 'erro')
+        showMessage('Somente administrador pode alterar o status.', 'erro')
         return
       }
 
@@ -581,37 +876,38 @@
 
         if (error) {
           console.error('Erro update status:', error)
-          mostrarMensagem('Erro ao atualizar status: ' + error.message, 'erro')
+          showMessage('Erro ao atualizar status: ' + error.message, 'erro')
           return
         }
 
-        await carregarChamados()
-        mostrarMensagem('Status atualizado com sucesso.', 'ok')
+        await loadTickets()
+        showMessage('Status atualizado com sucesso.', 'ok')
       } catch (e) {
         console.error('Erro conexão status:', e)
-        mostrarMensagem('Erro de conexão ao atualizar status.', 'erro')
+        showMessage('Erro de conexão ao atualizar status.', 'erro')
       }
     }
 
-    function limparFormulario() {
+    function clearForm() {
       $('titulo').value = ''
       $('descricao').value = ''
       $('local').value = ''
       $('prioridade').value = 'Média'
     }
 
-    $('btnAbrir').addEventListener('click', abrirChamado)
-    $('btnLimpar').addEventListener('click', limparFormulario)
-    $('busca').addEventListener('input', renderChamados)
-    $('filtroStatus').addEventListener('change', renderChamados)
-    $('btnEntrarAdmin').addEventListener('click', entrarAdmin)
-    $('btnSairAdmin').addEventListener('click', sairAdmin)
+    $('btnAbrir').addEventListener('click', createTicket)
+    $('btnLimpar').addEventListener('click', clearForm)
+    $('btnEntrarAdmin').addEventListener('click', enterAdminMode)
+    $('btnSairAdmin').addEventListener('click', exitAdminMode)
+    $('busca').addEventListener('input', renderTickets)
+    $('filtroStatus').addEventListener('change', renderTickets)
+    $('filtroSetor').addEventListener('change', renderTickets)
 
     window.alterarSetor = alterarSetor
     window.alterarStatus = alterarStatus
 
-    atualizarInterfaceAdmin()
-    carregarChamados()
+    updateAdminUI()
+    loadTickets()
   </script>
 </body>
 </html>
