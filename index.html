@@ -174,19 +174,9 @@
       background: #475569;
     }
 
-    .btn-alerta {
-      background: #b45309;
-    }
-
     .btn-ghost {
       background: #e2e8f0;
       color: #1e293b;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
     }
 
     .actions {
@@ -199,6 +189,12 @@
     .actions button {
       width: auto;
       min-width: 150px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
     .msg {
@@ -374,6 +370,27 @@
       word-break: break-word;
     }
 
+    .obs-box {
+      margin-top: 12px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .obs-box small {
+      display: block;
+      font-weight: bold;
+      color: #9a3412;
+      margin-bottom: 6px;
+    }
+
+    .obs-box div {
+      color: #7c2d12;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
     .admin-box {
       margin-top: 14px;
       padding: 12px;
@@ -386,6 +403,13 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
+    }
+
+    .admin-grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .empty {
@@ -484,7 +508,7 @@
         <h2>📋 Abrir chamado</h2>
 
         <label for="titulo">Título</label>
-        <input id="titulo" placeholder="Ex: Torneira da cozinha não fecha">
+        <input id="titulo" placeholder="Ex: TORNEIRA DA COZINHA NÃO FECHA">
 
         <label for="descricao">Descrição</label>
         <textarea id="descricao" placeholder="Descreva o problema com detalhes"></textarea>
@@ -492,7 +516,7 @@
         <div class="grid-2">
           <div>
             <label for="local">Local</label>
-            <input id="local" placeholder="Ex: Cozinha, Sala 2, Corredor">
+            <input id="local" placeholder="Ex: COZINHA, SALA 2, CORREDOR">
           </div>
           <div>
             <label for="prioridade">Prioridade</label>
@@ -568,8 +592,28 @@
     const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
     const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
 
-    // Troque pela senha desejada
     const ADMIN_PASSWORD = '123456'
+
+    const RESPONSAVEIS = [
+      '1º TEN MARCELO',
+      '1º SGT VICENTE',
+      '1º SGT DIEFERSON',
+      '1º SGT BATISTA',
+      '2º SGT ANDERSON',
+      '2º SGT VINICIUS',
+      '2º SGT LISCANO',
+      'SD TOMASCHEWSKI',
+      'SD CAMACHO',
+      'SD ISQUIERDO',
+      'SD BORGES',
+      'SD BATISTA',
+      'SD MAX',
+      'SD WILLIAM',
+      'SD MOTTA',
+      'SD SOARES',
+      'SD PEGLOW',
+      'SD LARSSON'
+    ]
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
@@ -663,13 +707,19 @@
       showMessage('Modo administrador encerrado.', 'ok')
     }
 
+    function toUpperSafe(value) {
+      return String(value || '').trim().toUpperCase()
+    }
+
     async function createTicket() {
-      const nome = $('nome').value.trim()
+      const nome = toUpperSafe($('nome').value)
       const matricula = $('matricula').value.trim()
-      const titulo = $('titulo').value.trim()
+      const titulo = toUpperSafe($('titulo').value)
       const descricao = $('descricao').value.trim()
-      const local = $('local').value.trim()
+      const local = toUpperSafe($('local').value)
       const prioridade = $('prioridade').value
+
+      $('nome').value = nome
 
       if (!nome || !matricula || !titulo) {
         showMessage('Preencha nome, matrícula e título.', 'erro')
@@ -686,7 +736,9 @@
             descricao,
             local,
             prioridade,
-            status: 'Aguardando triagem'
+            status: 'Aguardando triagem',
+            observacao_admin: null,
+            responsavel_designado: null
           }])
 
         if (error) {
@@ -740,6 +792,14 @@
       $('stFinalizado').textContent = finalizado
     }
 
+    function responsavelOptions(selectedValue = '') {
+      const first = `<option value="" ${!selectedValue ? 'selected' : ''}>Não definido</option>`
+      const others = RESPONSAVEIS.map(nome => `
+        <option value="${escapeHtml(nome)}" ${selectedValue === nome ? 'selected' : ''}>${escapeHtml(nome)}</option>
+      `).join('')
+      return first + others
+    }
+
     function renderTickets() {
       const search = $('busca').value.trim().toLowerCase()
       const statusFilter = $('filtroStatus').value
@@ -754,7 +814,9 @@
           c.local,
           c.setor_responsavel,
           c.status,
-          c.prioridade
+          c.prioridade,
+          c.observacao_admin,
+          c.responsavel_designado
         ].join(' ').toLowerCase()
 
         const okSearch = !search || haystack.includes(search)
@@ -802,7 +864,30 @@
               <small>Setor responsável</small>
               <strong>${escapeHtml(c.setor_responsavel || 'Não definido')}</strong>
             </div>
+            <div class="meta-item">
+              <small>Responsável designado</small>
+              <strong>${escapeHtml(c.responsavel_designado || 'Não definido')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Prioridade</small>
+              <strong>${escapeHtml(c.prioridade || '-')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Status atual</small>
+              <strong>${escapeHtml(c.status || '-')}</strong>
+            </div>
+            <div class="meta-item">
+              <small>Abertura</small>
+              <strong>${escapeHtml(formatDate(c.created_at))}</strong>
+            </div>
           </div>
+
+          ${c.observacao_admin ? `
+            <div class="obs-box">
+              <small>📝 Observações da triagem</small>
+              <div>${escapeHtml(c.observacao_admin)}</div>
+            </div>
+          ` : ''}
 
           ${adminMode ? `
             <div class="admin-box">
@@ -828,6 +913,20 @@
                     <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
                     <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
                   </select>
+                </div>
+              </div>
+
+              <div class="admin-grid-1">
+                <div>
+                  <label>Responsável designado</label>
+                  <select onchange="alterarResponsavel('${c.id}', this.value)">
+                    ${responsavelOptions(c.responsavel_designado || '')}
+                  </select>
+                </div>
+
+                <div>
+                  <label>Observações da triagem</label>
+                  <textarea onblur="alterarObservacao('${c.id}', this.value)" placeholder="Escreva aqui a orientação da triagem...">${escapeHtml(c.observacao_admin || '')}</textarea>
                 </div>
               </div>
             </div>
@@ -888,12 +987,70 @@
       }
     }
 
+    async function alterarResponsavel(id, responsavel) {
+      if (!adminMode) {
+        showMessage('Somente administrador pode alterar o responsável.', 'erro')
+        return
+      }
+
+      try {
+        const { error } = await supabase
+          .from('chamados')
+          .update({ responsavel_designado: responsavel || null })
+          .eq('id', id)
+
+        if (error) {
+          console.error('Erro update responsável:', error)
+          showMessage('Erro ao atualizar responsável: ' + error.message, 'erro')
+          return
+        }
+
+        await loadTickets()
+        showMessage('Responsável designado atualizado com sucesso.', 'ok')
+      } catch (e) {
+        console.error('Erro conexão responsável:', e)
+        showMessage('Erro de conexão ao atualizar responsável.', 'erro')
+      }
+    }
+
+    async function alterarObservacao(id, observacao) {
+      if (!adminMode) {
+        showMessage('Somente administrador pode alterar observações.', 'erro')
+        return
+      }
+
+      try {
+        const texto = observacao.trim()
+
+        const { error } = await supabase
+          .from('chamados')
+          .update({ observacao_admin: texto || null })
+          .eq('id', id)
+
+        if (error) {
+          console.error('Erro update observação:', error)
+          showMessage('Erro ao atualizar observação: ' + error.message, 'erro')
+          return
+        }
+
+        await loadTickets()
+        showMessage('Observações da triagem atualizadas com sucesso.', 'ok')
+      } catch (e) {
+        console.error('Erro conexão observação:', e)
+        showMessage('Erro de conexão ao atualizar observação.', 'erro')
+      }
+    }
+
     function clearForm() {
       $('titulo').value = ''
       $('descricao').value = ''
       $('local').value = ''
       $('prioridade').value = 'Média'
     }
+
+    $('nome').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase()
+    })
 
     $('btnAbrir').addEventListener('click', createTicket)
     $('btnLimpar').addEventListener('click', clearForm)
@@ -905,6 +1062,8 @@
 
     window.alterarSetor = alterarSetor
     window.alterarStatus = alterarStatus
+    window.alterarResponsavel = alterarResponsavel
+    window.alterarObservacao = alterarObservacao
 
     updateAdminUI()
     loadTickets()
