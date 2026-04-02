@@ -37,6 +37,10 @@
       --baixa-row: #f8fafc;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       padding: 20px;
@@ -232,57 +236,90 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(6, minmax(95px, 1fr));
+      gap: 10px;
       margin-bottom: 14px;
     }
 
     .stat {
       background: var(--soft);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 12px 8px;
       text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+      user-select: none;
+    }
+
+    .stat:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(15, 76, 129, 0.08);
+    }
+
+    .stat.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(21, 101, 169, 0.12);
+      background: #edf5ff;
     }
 
     .stat .num {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       color: var(--primary);
       margin-bottom: 4px;
+      line-height: 1;
     }
 
     .stat .lab {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
+      line-height: 1.2;
+      font-weight: bold;
     }
 
     .setor-stats {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(6, minmax(85px, 1fr));
+      gap: 8px;
       margin-bottom: 14px;
     }
 
     .setor-box {
       background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 10px;
+      border-radius: 12px;
+      padding: 10px 6px;
       text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+      user-select: none;
+    }
+
+    .setor-box:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(15, 76, 129, 0.08);
+    }
+
+    .setor-box.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(21, 101, 169, 0.12);
+      background: #edf5ff;
     }
 
     .setor-box .setor-num {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
       color: var(--primary);
       margin-bottom: 4px;
+      line-height: 1;
     }
 
     .setor-box .setor-lab {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
       font-weight: bold;
+      line-height: 1.1;
     }
 
     .toolbar {
@@ -494,9 +531,12 @@
         grid-template-columns: 1fr;
       }
 
-      .stats,
+      .stats {
+        grid-template-columns: repeat(3, minmax(90px, 1fr));
+      }
+
       .setor-stats {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(80px, 1fr));
       }
 
       .toolbar {
@@ -510,10 +550,44 @@
       }
 
       .grid-2,
-      .toolbar,
-      .stats,
-      .setor-stats {
+      .toolbar {
         grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .setor-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .stat {
+        padding: 10px 6px;
+        border-radius: 12px;
+      }
+
+      .stat .num {
+        font-size: 18px;
+      }
+
+      .stat .lab {
+        font-size: 10px;
+      }
+
+      .setor-box {
+        padding: 8px 4px;
+        border-radius: 12px;
+      }
+
+      .setor-box .setor-num {
+        font-size: 16px;
+      }
+
+      .setor-box .setor-lab {
+        font-size: 10px;
       }
 
       .actions {
@@ -598,27 +672,63 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="painelChamados">
         <h2>📊 Painel de chamados</h2>
-        <div class="sub">Exibição em linhas estilo planilha, ordenada por prioridade alta para baixa.</div>
+        <div class="sub">Toque nos contadores para filtrar rapidamente a lista abaixo.</div>
 
         <div class="stats">
-          <div class="stat"><div class="num" id="stTotal">0</div><div class="lab">Total</div></div>
-          <div class="stat"><div class="num" id="stAguardando">0</div><div class="lab">Aguardando</div></div>
-          <div class="stat"><div class="num" id="stEncaminhado">0</div><div class="lab">Encaminhado</div></div>
-          <div class="stat"><div class="num" id="stAndamento">0</div><div class="lab">Em andamento</div></div>
-          <div class="stat"><div class="num" id="stFinalizado">0</div><div class="lab">Finalizado</div></div>
-          <div class="stat"><div class="num" id="stNegado">0</div><div class="lab">Negado</div></div>
+          <div class="stat" id="cardTotal" onclick="aplicarFiltroContador('')">
+            <div class="num" id="stTotal">0</div>
+            <div class="lab">Total</div>
+          </div>
+          <div class="stat" id="cardAguardando" onclick="aplicarFiltroContador('Aguardando triagem')">
+            <div class="num" id="stAguardando">0</div>
+            <div class="lab">Aguardando</div>
+          </div>
+          <div class="stat" id="cardEncaminhado" onclick="aplicarFiltroContador('Encaminhado')">
+            <div class="num" id="stEncaminhado">0</div>
+            <div class="lab">Encaminhado</div>
+          </div>
+          <div class="stat" id="cardAndamento" onclick="aplicarFiltroContador('Em andamento')">
+            <div class="num" id="stAndamento">0</div>
+            <div class="lab">Em andamento</div>
+          </div>
+          <div class="stat" id="cardFinalizado" onclick="aplicarFiltroContador('Finalizado')">
+            <div class="num" id="stFinalizado">0</div>
+            <div class="lab">Finalizado</div>
+          </div>
+          <div class="stat" id="cardNegado" onclick="aplicarFiltroContador('Negado')">
+            <div class="num" id="stNegado">0</div>
+            <div class="lab">Negado</div>
+          </div>
         </div>
 
         <div class="sub" style="margin-top:8px;">Contador por setor</div>
         <div class="setor-stats">
-          <div class="setor-box"><div class="setor-num" id="setorB1">0</div><div class="setor-lab">B1</div></div>
-          <div class="setor-box"><div class="setor-num" id="setorB2">0</div><div class="setor-lab">B2</div></div>
-          <div class="setor-box"><div class="setor-num" id="setorB3">0</div><div class="setor-lab">B3</div></div>
-          <div class="setor-box"><div class="setor-num" id="setorB4">0</div><div class="setor-lab">B4</div></div>
-          <div class="setor-box"><div class="setor-num" id="setorB5">0</div><div class="setor-lab">B5</div></div>
-          <div class="setor-box"><div class="setor-num" id="setorSseg">0</div><div class="setor-lab">Sseg</div></div>
+          <div class="setor-box" id="boxB1" onclick="aplicarFiltroSetor('B1')">
+            <div class="setor-num" id="setorB1">0</div>
+            <div class="setor-lab">B1</div>
+          </div>
+          <div class="setor-box" id="boxB2" onclick="aplicarFiltroSetor('B2')">
+            <div class="setor-num" id="setorB2">0</div>
+            <div class="setor-lab">B2</div>
+          </div>
+          <div class="setor-box" id="boxB3" onclick="aplicarFiltroSetor('B3')">
+            <div class="setor-num" id="setorB3">0</div>
+            <div class="setor-lab">B3</div>
+          </div>
+          <div class="setor-box" id="boxB4" onclick="aplicarFiltroSetor('B4')">
+            <div class="setor-num" id="setorB4">0</div>
+            <div class="setor-lab">B4</div>
+          </div>
+          <div class="setor-box" id="boxB5" onclick="aplicarFiltroSetor('B5')">
+            <div class="setor-num" id="setorB5">0</div>
+            <div class="setor-lab">B5</div>
+          </div>
+          <div class="setor-box" id="boxSseg" onclick="aplicarFiltroSetor('Sseg')">
+            <div class="setor-num" id="setorSseg">0</div>
+            <div class="setor-lab">Sseg</div>
+          </div>
         </div>
 
         <div class="toolbar">
@@ -765,6 +875,49 @@
       }
 
       renderTickets()
+    }
+
+    function updateActiveCounters() {
+      const statusValue = $('filtroStatus').value
+      const setorValue = $('filtroSetor').value
+
+      ['cardTotal','cardAguardando','cardEncaminhado','cardAndamento','cardFinalizado','cardNegado']
+        .forEach(id => $(id).classList.remove('active'))
+
+      ['boxB1','boxB2','boxB3','boxB4','boxB5','boxSseg']
+        .forEach(id => $(id).classList.remove('active'))
+
+      if (!statusValue) $('cardTotal').classList.add('active')
+      if (statusValue === 'Aguardando triagem') $('cardAguardando').classList.add('active')
+      if (statusValue === 'Encaminhado') $('cardEncaminhado').classList.add('active')
+      if (statusValue === 'Em andamento') $('cardAndamento').classList.add('active')
+      if (statusValue === 'Finalizado') $('cardFinalizado').classList.add('active')
+      if (statusValue === 'Negado') $('cardNegado').classList.add('active')
+
+      if (setorValue === 'B1') $('boxB1').classList.add('active')
+      if (setorValue === 'B2') $('boxB2').classList.add('active')
+      if (setorValue === 'B3') $('boxB3').classList.add('active')
+      if (setorValue === 'B4') $('boxB4').classList.add('active')
+      if (setorValue === 'B5') $('boxB5').classList.add('active')
+      if (setorValue === 'Sseg') $('boxSseg').classList.add('active')
+    }
+
+    function scrollToList() {
+      $('painelChamados').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
+    function aplicarFiltroContador(status) {
+      $('filtroStatus').value = status
+      updateActiveCounters()
+      renderTickets()
+      scrollToList()
+    }
+
+    function aplicarFiltroSetor(setor) {
+      $('filtroSetor').value = setor
+      updateActiveCounters()
+      renderTickets()
+      scrollToList()
     }
 
     function enterAdminMode() {
@@ -924,6 +1077,8 @@
         if (p !== 0) return p
         return new Date(b.created_at) - new Date(a.created_at)
       })
+
+      updateActiveCounters()
 
       if (!filtered.length) {
         $('lista').innerHTML = `<div class="empty">Nenhum chamado encontrado.</div>`
@@ -1114,8 +1269,8 @@
     $('btnEntrarAdmin').addEventListener('click', enterAdminMode)
     $('btnSairAdmin').addEventListener('click', exitAdminMode)
     $('busca').addEventListener('input', renderTickets)
-    $('filtroStatus').addEventListener('change', renderTickets)
-    $('filtroSetor').addEventListener('change', renderTickets)
+    $('filtroStatus').addEventListener('change', () => { updateActiveCounters(); renderTickets() })
+    $('filtroSetor').addEventListener('change', () => { updateActiveCounters(); renderTickets() })
     $('filtroResponsavel').addEventListener('change', renderTickets)
     $('somenteNegados').addEventListener('change', renderTickets)
 
@@ -1126,6 +1281,8 @@
     window.alterarObservacao = alterarObservacao
     window.alterarJustificativaNegativa = alterarJustificativaNegativa
     window.negarChamado = negarChamado
+    window.aplicarFiltroContador = aplicarFiltroContador
+    window.aplicarFiltroSetor = aplicarFiltroSetor
 
     updateAdminUI()
     loadTickets()
