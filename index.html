@@ -32,6 +32,9 @@
       --negado-bg: #fef2f2;
       --negado-tx: #b91c1c;
       --negado-bd: #fca5a5;
+      --alta-row: #fff1f2;
+      --media-row: #fffbeb;
+      --baixa-row: #f8fafc;
     }
 
     body {
@@ -42,15 +45,15 @@
     }
 
     .container {
-      max-width: 1250px;
+      max-width: 1450px;
       margin: 0 auto;
     }
 
     .hero {
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
       color: #fff;
-      border-radius: 22px;
-      padding: 24px;
+      border-radius: 24px;
+      padding: 26px;
       box-shadow: 0 14px 32px rgba(0,0,0,0.12);
       margin-bottom: 18px;
     }
@@ -65,12 +68,13 @@
 
     .hero h1 {
       margin: 0 0 8px;
-      font-size: 32px;
+      font-size: 34px;
     }
 
     .hero p {
       margin: 0;
-      opacity: 0.95;
+      opacity: 0.96;
+      font-size: 15px;
     }
 
     .admin-painel {
@@ -101,13 +105,13 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 1fr 1.5fr;
+      grid-template-columns: 390px 1fr;
       gap: 18px;
     }
 
     .card {
       background: var(--card);
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 18px;
       box-shadow: 0 10px 28px rgba(15, 76, 129, 0.08);
       border: 1px solid #edf2f7;
@@ -242,73 +246,158 @@
     }
 
     .stat .num {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: bold;
       color: var(--primary);
       margin-bottom: 4px;
     }
 
     .stat .lab {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--muted);
+    }
+
+    .setor-stats {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .setor-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .setor-box .setor-num {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .setor-box .setor-lab {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: bold;
     }
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
+      grid-template-columns: 1.1fr 1fr 1fr 1fr;
       gap: 10px;
       margin-bottom: 12px;
     }
 
-    .ticket {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px;
-      margin-top: 12px;
-      box-shadow: 0 6px 18px rgba(15, 76, 129, 0.05);
-    }
-
-    .ticket.negado {
-      border-color: var(--negado-bd);
-      background: #fffafa;
-    }
-
-    .ticket-top {
+    .toggle-wrap {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      flex-wrap: wrap;
+      align-items: end;
       margin-bottom: 10px;
     }
 
-    .ticket-title {
-      font-size: 20px;
+    .check-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      width: 220px;
+      height: 45px;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    .check-box input {
+      width: auto;
+      margin: 0;
+      transform: scale(1.1);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1700px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #eaf2fb;
+      color: #0f4c81;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      z-index: 1;
+    }
+
+    tbody td {
+      vertical-align: top;
+      border-bottom: 1px solid #e5edf5;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    tbody tr:hover {
+      background: #f8fbff;
+    }
+
+    tbody tr.row-alta {
+      background: var(--alta-row);
+    }
+
+    tbody tr.row-media {
+      background: var(--media-row);
+    }
+
+    tbody tr.row-baixa {
+      background: var(--baixa-row);
+    }
+
+    tbody tr.row-negado {
+      background: var(--negado-bg);
+    }
+
+    .cell-title {
       font-weight: bold;
       color: #0f172a;
       margin-bottom: 4px;
     }
 
-    .ticket-meta-head {
-      font-size: 13px;
+    .cell-sub {
       color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: pre-wrap;
     }
 
-    .badges {
+    .mini-badges {
       display: flex;
-      gap: 8px;
       flex-wrap: wrap;
-      justify-content: flex-end;
+      gap: 6px;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 7px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       white-space: nowrap;
     }
@@ -353,130 +442,64 @@
       color: #b91c1c;
     }
 
-    .ticket-desc {
-      margin-top: 8px;
-      color: #334155;
-      line-height: 1.45;
+    .obs-small,
+    .neg-small {
       white-space: pre-wrap;
-    }
-
-    .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .meta-item {
-      background: var(--soft);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-    }
-
-    .meta-item small {
-      display: block;
-      color: var(--muted);
-      margin-bottom: 4px;
+      line-height: 1.35;
       font-size: 12px;
+      max-width: 260px;
     }
 
-    .meta-item strong {
-      font-size: 14px;
-      color: #0f172a;
-      word-break: break-word;
-    }
-
-    .obs-box {
-      margin-top: 12px;
-      background: #fff7ed;
-      border: 1px solid #fdba74;
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .obs-box small {
-      display: block;
-      font-weight: bold;
-      color: #9a3412;
-      margin-bottom: 6px;
-    }
-
-    .obs-box div {
-      color: #7c2d12;
-      white-space: pre-wrap;
-      line-height: 1.45;
-    }
-
-    .negado-box {
-      margin-top: 12px;
-      background: var(--negado-bg);
-      border: 1px solid var(--negado-bd);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .negado-box small {
-      display: block;
-      font-weight: bold;
-      color: var(--negado-tx);
-      margin-bottom: 6px;
-    }
-
-    .negado-box div {
+    .neg-small {
       color: #7f1d1d;
-      white-space: pre-wrap;
-      line-height: 1.45;
+      font-weight: bold;
     }
 
-    .admin-box {
-      margin-top: 14px;
-      padding: 12px;
-      background: #fff;
-      border-radius: 14px;
-      border: 1px dashed #cbd5e1;
+    .admin-cell {
+      min-width: 240px;
     }
 
-    .admin-grid {
+    .admin-stack {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .admin-grid-1 {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
+    .admin-stack select,
+    .admin-stack textarea,
+    .admin-stack button {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    .admin-stack textarea {
+      min-height: 72px;
     }
 
     .empty {
-      margin-top: 12px;
       padding: 16px;
       border-radius: 14px;
       background: var(--soft);
       border: 1px solid var(--border);
       color: var(--muted);
+      margin-top: 10px;
     }
 
     .hidden {
       display: none;
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 1180px) {
       .layout {
         grid-template-columns: 1fr;
       }
 
-      .stats {
+      .stats,
+      .setor-stats {
         grid-template-columns: repeat(3, 1fr);
       }
 
       .toolbar {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .meta-grid {
         grid-template-columns: 1fr 1fr;
       }
     }
@@ -488,9 +511,8 @@
 
       .grid-2,
       .toolbar,
-      .meta-grid,
-      .admin-grid,
-      .stats {
+      .stats,
+      .setor-stats {
         grid-template-columns: 1fr;
       }
 
@@ -504,6 +526,10 @@
 
       .hero h1 {
         font-size: 26px;
+      }
+
+      .check-box {
+        width: 100%;
       }
     }
   </style>
@@ -574,33 +600,25 @@
 
       <div class="card">
         <h2>📊 Painel de chamados</h2>
-        <div class="sub">Acompanhe os registros e filtre rapidamente.</div>
+        <div class="sub">Exibição em linhas estilo planilha, ordenada por prioridade alta para baixa.</div>
 
         <div class="stats">
-          <div class="stat">
-            <div class="num" id="stTotal">0</div>
-            <div class="lab">Total</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="stAguardando">0</div>
-            <div class="lab">Aguardando</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="stEncaminhado">0</div>
-            <div class="lab">Encaminhado</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="stAndamento">0</div>
-            <div class="lab">Em andamento</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="stFinalizado">0</div>
-            <div class="lab">Finalizado</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="stNegado">0</div>
-            <div class="lab">Negado</div>
-          </div>
+          <div class="stat"><div class="num" id="stTotal">0</div><div class="lab">Total</div></div>
+          <div class="stat"><div class="num" id="stAguardando">0</div><div class="lab">Aguardando</div></div>
+          <div class="stat"><div class="num" id="stEncaminhado">0</div><div class="lab">Encaminhado</div></div>
+          <div class="stat"><div class="num" id="stAndamento">0</div><div class="lab">Em andamento</div></div>
+          <div class="stat"><div class="num" id="stFinalizado">0</div><div class="lab">Finalizado</div></div>
+          <div class="stat"><div class="num" id="stNegado">0</div><div class="lab">Negado</div></div>
+        </div>
+
+        <div class="sub" style="margin-top:8px;">Contador por setor</div>
+        <div class="setor-stats">
+          <div class="setor-box"><div class="setor-num" id="setorB1">0</div><div class="setor-lab">B1</div></div>
+          <div class="setor-box"><div class="setor-num" id="setorB2">0</div><div class="setor-lab">B2</div></div>
+          <div class="setor-box"><div class="setor-num" id="setorB3">0</div><div class="setor-lab">B3</div></div>
+          <div class="setor-box"><div class="setor-num" id="setorB4">0</div><div class="setor-lab">B4</div></div>
+          <div class="setor-box"><div class="setor-num" id="setorB5">0</div><div class="setor-lab">B5</div></div>
+          <div class="setor-box"><div class="setor-num" id="setorSseg">0</div><div class="setor-lab">Sseg</div></div>
         </div>
 
         <div class="toolbar">
@@ -622,6 +640,16 @@
             <option value="B5">B5</option>
             <option value="Sseg">Sseg</option>
           </select>
+          <select id="filtroResponsavel">
+            <option value="">Todos os responsáveis</option>
+          </select>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="check-box">
+            <input type="checkbox" id="somenteNegados">
+            Somente negados
+          </label>
         </div>
 
         <div id="lista"></div>
@@ -634,7 +662,6 @@
 
     const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
     const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
-
     const ADMIN_PASSWORD = '123456'
 
     const RESPONSAVEIS = [
@@ -659,7 +686,6 @@
     ]
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
-
     const $ = (id) => document.getElementById(id)
 
     let chamados = []
@@ -670,7 +696,6 @@
       box.className = `msg ${type}`
       box.textContent = text
       box.style.display = 'block'
-
       clearTimeout(window.__helpdeskMsgTimer)
       window.__helpdeskMsgTimer = setTimeout(() => {
         box.style.display = 'none'
@@ -709,6 +734,19 @@
       return ''
     }
 
+    function rowPriorityClass(priority, status) {
+      if (status === 'Negado') return 'row-negado'
+      if (priority === 'Alta') return 'row-alta'
+      if (priority === 'Média') return 'row-media'
+      return 'row-baixa'
+    }
+
+    function priorityWeight(priority) {
+      if (priority === 'Alta') return 3
+      if (priority === 'Média') return 2
+      return 1
+    }
+
     function updateAdminUI() {
       const status = $('adminStatus')
       const enterBtn = $('btnEntrarAdmin')
@@ -732,12 +770,10 @@
     function enterAdminMode() {
       const password = prompt('Digite a senha do administrador:')
       if (password === null) return
-
       if (password !== ADMIN_PASSWORD) {
         showMessage('Senha de administrador incorreta.', 'erro')
         return
       }
-
       adminMode = true
       localStorage.setItem('helpdesk_admin_mode', 'true')
       updateAdminUI()
@@ -753,6 +789,18 @@
 
     function toUpperSafe(value) {
       return String(value || '').trim().toUpperCase()
+    }
+
+    function populateResponsavelFilter() {
+      const filtro = $('filtroResponsavel')
+      const atual = filtro.value
+      const nomesUsados = [...new Set(chamados.map(c => c.responsavel_designado).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+
+      filtro.innerHTML = `<option value="">Todos os responsáveis</option>` +
+        nomesUsados.map(nome => `<option value="${escapeHtml(nome)}">${escapeHtml(nome)}</option>`).join('')
+
+      if (nomesUsados.includes(atual)) filtro.value = atual
     }
 
     async function createTicket() {
@@ -787,7 +835,7 @@
           }])
 
         if (error) {
-          console.error('Erro insert:', error)
+          console.error(error)
           showMessage('Erro ao registrar chamado: ' + error.message, 'erro')
           return
         }
@@ -796,7 +844,7 @@
         await loadTickets()
         showMessage('Chamado registrado com sucesso.', 'ok')
       } catch (e) {
-        console.error('Erro conexão insert:', e)
+        console.error(e)
         showMessage('Erro de conexão ao registrar chamado.', 'erro')
       }
     }
@@ -809,34 +857,35 @@
           .order('created_at', { ascending: false })
 
         if (error) {
-          console.error('Erro select:', error)
+          console.error(error)
           $('lista').innerHTML = `<div class="empty">Erro ao carregar chamados: ${escapeHtml(error.message)}</div>`
           return
         }
 
         chamados = data || []
+        populateResponsavelFilter()
         updateStats()
+        updateSetorStats()
         renderTickets()
       } catch (e) {
-        console.error('Erro conexão select:', e)
+        console.error(e)
         $('lista').innerHTML = `<div class="empty">Erro de conexão ao carregar chamados.</div>`
       }
     }
 
     function updateStats() {
-      const total = chamados.length
-      const aguardando = chamados.filter(c => c.status === 'Aguardando triagem').length
-      const encaminhado = chamados.filter(c => c.status === 'Encaminhado').length
-      const andamento = chamados.filter(c => c.status === 'Em andamento').length
-      const finalizado = chamados.filter(c => c.status === 'Finalizado').length
-      const negado = chamados.filter(c => c.status === 'Negado').length
+      $('stTotal').textContent = chamados.length
+      $('stAguardando').textContent = chamados.filter(c => c.status === 'Aguardando triagem').length
+      $('stEncaminhado').textContent = chamados.filter(c => c.status === 'Encaminhado').length
+      $('stAndamento').textContent = chamados.filter(c => c.status === 'Em andamento').length
+      $('stFinalizado').textContent = chamados.filter(c => c.status === 'Finalizado').length
+      $('stNegado').textContent = chamados.filter(c => c.status === 'Negado').length
+    }
 
-      $('stTotal').textContent = total
-      $('stAguardando').textContent = aguardando
-      $('stEncaminhado').textContent = encaminhado
-      $('stAndamento').textContent = andamento
-      $('stFinalizado').textContent = finalizado
-      $('stNegado').textContent = negado
+    function updateSetorStats() {
+      for (const setor of ['B1', 'B2', 'B3', 'B4', 'B5', 'Sseg']) {
+        $(`setor${setor}`).textContent = chamados.filter(c => c.setor_responsavel === setor).length
+      }
     }
 
     function responsavelOptions(selectedValue = '') {
@@ -851,27 +900,29 @@
       const search = $('busca').value.trim().toLowerCase()
       const statusFilter = $('filtroStatus').value
       const setorFilter = $('filtroSetor').value
+      const responsavelFilter = $('filtroResponsavel').value
+      const onlyDenied = $('somenteNegados').checked
 
-      const filtered = chamados.filter(c => {
+      let filtered = chamados.filter(c => {
         const haystack = [
-          c.titulo,
-          c.descricao,
-          c.nome_solicitante,
-          c.matricula_solicitante,
-          c.local,
-          c.setor_responsavel,
-          c.status,
-          c.prioridade,
-          c.observacao_admin,
-          c.responsavel_designado,
-          c.justificativa_negativa
+          c.titulo, c.descricao, c.nome_solicitante, c.matricula_solicitante,
+          c.local, c.setor_responsavel, c.status, c.prioridade,
+          c.observacao_admin, c.responsavel_designado, c.justificativa_negativa
         ].join(' ').toLowerCase()
 
-        const okSearch = !search || haystack.includes(search)
-        const okStatus = !statusFilter || c.status === statusFilter
-        const okSetor = !setorFilter || c.setor_responsavel === setorFilter
+        return (
+          (!search || haystack.includes(search)) &&
+          (!statusFilter || c.status === statusFilter) &&
+          (!setorFilter || c.setor_responsavel === setorFilter) &&
+          (!responsavelFilter || c.responsavel_designado === responsavelFilter) &&
+          (!onlyDenied || c.status === 'Negado')
+        )
+      })
 
-        return okSearch && okStatus && okSetor
+      filtered.sort((a, b) => {
+        const p = priorityWeight(b.prioridade) - priorityWeight(a.prioridade)
+        if (p !== 0) return p
+        return new Date(b.created_at) - new Date(a.created_at)
       })
 
       if (!filtered.length) {
@@ -879,174 +930,104 @@
         return
       }
 
-      $('lista').innerHTML = filtered.map(c => `
-        <div class="ticket ${c.status === 'Negado' ? 'negado' : ''}">
-          <div class="ticket-top">
-            <div>
-              <div class="ticket-title">${escapeHtml(c.titulo)}</div>
-              <div class="ticket-meta-head">Chamado registrado em ${escapeHtml(formatDate(c.created_at))}</div>
-            </div>
+      $('lista').innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Título / Descrição</th>
+                <th>Solicitante</th>
+                <th>Matrícula</th>
+                <th>Local</th>
+                <th>Status / Prioridade</th>
+                <th>Setor</th>
+                <th>Responsável</th>
+                <th>Observações</th>
+                <th>Negativa</th>
+                <th>Abertura</th>
+                ${adminMode ? '<th>Ações Admin</th>' : ''}
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered.map(c => `
+                <tr class="${rowPriorityClass(c.prioridade, c.status)}">
+                  <td>
+                    <div class="cell-title">${escapeHtml(c.titulo || '-')}</div>
+                    <div class="cell-sub">${escapeHtml(c.descricao || '')}</div>
+                  </td>
+                  <td>${escapeHtml(c.nome_solicitante || '-')}</td>
+                  <td>${escapeHtml(c.matricula_solicitante || '-')}</td>
+                  <td>${escapeHtml(c.local || '-')}</td>
+                  <td>
+                    <div class="mini-badges">
+                      <span class="badge ${statusClass(c.status)}">${escapeHtml(c.status || '-')}</span>
+                      <span class="badge ${priorityClass(c.prioridade)}">${escapeHtml(c.prioridade || '-')}</span>
+                    </div>
+                  </td>
+                  <td>${escapeHtml(c.setor_responsavel || 'Não definido')}</td>
+                  <td>${escapeHtml(c.responsavel_designado || 'Não definido')}</td>
+                  <td><div class="obs-small">${escapeHtml(c.observacao_admin || '-')}</div></td>
+                  <td><div class="neg-small">${escapeHtml(c.justificativa_negativa || '-')}</div></td>
+                  <td>${escapeHtml(formatDate(c.created_at))}</td>
+                  ${adminMode ? `
+                    <td class="admin-cell">
+                      <div class="admin-stack">
+                        <select onchange="alterarSetor('${c.id}', this.value)">
+                          <option value="" ${!c.setor_responsavel ? 'selected' : ''}>Setor: Não definido</option>
+                          <option value="B1" ${c.setor_responsavel === 'B1' ? 'selected' : ''}>B1</option>
+                          <option value="B2" ${c.setor_responsavel === 'B2' ? 'selected' : ''}>B2</option>
+                          <option value="B3" ${c.setor_responsavel === 'B3' ? 'selected' : ''}>B3</option>
+                          <option value="B4" ${c.setor_responsavel === 'B4' ? 'selected' : ''}>B4</option>
+                          <option value="B5" ${c.setor_responsavel === 'B5' ? 'selected' : ''}>B5</option>
+                          <option value="Sseg" ${c.setor_responsavel === 'Sseg' ? 'selected' : ''}>Sseg</option>
+                        </select>
 
-            <div class="badges">
-              <span class="badge ${statusClass(c.status)}">📌 ${escapeHtml(c.status || '-')}</span>
-              <span class="badge ${priorityClass(c.prioridade)}">⚡ ${escapeHtml(c.prioridade || '-')}</span>
-            </div>
-          </div>
+                        <select onchange="alterarStatus('${c.id}', this.value)">
+                          <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
+                          <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
+                          <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                          <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+                          <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
+                        </select>
 
-          <div class="ticket-desc">${escapeHtml(c.descricao || '')}</div>
+                        <select onchange="alterarPrioridade('${c.id}', this.value)">
+                          <option value="Baixa" ${c.prioridade === 'Baixa' ? 'selected' : ''}>Prioridade: Baixa</option>
+                          <option value="Média" ${c.prioridade === 'Média' ? 'selected' : ''}>Prioridade: Média</option>
+                          <option value="Alta" ${c.prioridade === 'Alta' ? 'selected' : ''}>Prioridade: Alta</option>
+                        </select>
 
-          <div class="meta-grid">
-            <div class="meta-item">
-              <small>Solicitante</small>
-              <strong>${escapeHtml(c.nome_solicitante || '-')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Matrícula</small>
-              <strong>${escapeHtml(c.matricula_solicitante || '-')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Local</small>
-              <strong>${escapeHtml(c.local || '-')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Setor responsável</small>
-              <strong>${escapeHtml(c.setor_responsavel || 'Não definido')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Responsável designado</small>
-              <strong>${escapeHtml(c.responsavel_designado || 'Não definido')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Prioridade</small>
-              <strong>${escapeHtml(c.prioridade || '-')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Status atual</small>
-              <strong>${escapeHtml(c.status || '-')}</strong>
-            </div>
-            <div class="meta-item">
-              <small>Abertura</small>
-              <strong>${escapeHtml(formatDate(c.created_at))}</strong>
-            </div>
-          </div>
+                        <select onchange="alterarResponsavel('${c.id}', this.value)">
+                          ${responsavelOptions(c.responsavel_designado || '')}
+                        </select>
 
-          ${c.observacao_admin ? `
-            <div class="obs-box">
-              <small>📝 Observações da triagem</small>
-              <div>${escapeHtml(c.observacao_admin)}</div>
-            </div>
-          ` : ''}
-
-          ${c.status === 'Negado' && c.justificativa_negativa ? `
-            <div class="negado-box">
-              <small>⛔ Justificativa da negativa</small>
-              <div>${escapeHtml(c.justificativa_negativa)}</div>
-            </div>
-          ` : ''}
-
-          ${adminMode ? `
-            <div class="admin-box">
-              <div class="admin-grid">
-                <div>
-                  <label>Setor responsável</label>
-                  <select onchange="alterarSetor('${c.id}', this.value)">
-                    <option value="" ${!c.setor_responsavel ? 'selected' : ''}>Não definido</option>
-                    <option value="B1" ${c.setor_responsavel === 'B1' ? 'selected' : ''}>B1</option>
-                    <option value="B2" ${c.setor_responsavel === 'B2' ? 'selected' : ''}>B2</option>
-                    <option value="B3" ${c.setor_responsavel === 'B3' ? 'selected' : ''}>B3</option>
-                    <option value="B4" ${c.setor_responsavel === 'B4' ? 'selected' : ''}>B4</option>
-                    <option value="B5" ${c.setor_responsavel === 'B5' ? 'selected' : ''}>B5</option>
-                    <option value="Sseg" ${c.setor_responsavel === 'Sseg' ? 'selected' : ''}>Sseg</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label>Status</label>
-                  <select onchange="alterarStatus('${c.id}', this.value)">
-                    <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
-                    <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
-                    <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                    <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-                    <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="admin-grid">
-                <div>
-                  <label>Prioridade</label>
-                  <select onchange="alterarPrioridade('${c.id}', this.value)">
-                    <option value="Baixa" ${c.prioridade === 'Baixa' ? 'selected' : ''}>Baixa</option>
-                    <option value="Média" ${c.prioridade === 'Média' ? 'selected' : ''}>Média</option>
-                    <option value="Alta" ${c.prioridade === 'Alta' ? 'selected' : ''}>Alta</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label>Responsável designado</label>
-                  <select onchange="alterarResponsavel('${c.id}', this.value)">
-                    ${responsavelOptions(c.responsavel_designado || '')}
-                  </select>
-                </div>
-              </div>
-
-              <div class="admin-grid-1">
-                <div>
-                  <label>Observações da triagem</label>
-                  <textarea onblur="alterarObservacao('${c.id}', this.value)" placeholder="Escreva aqui a orientação da triagem...">${escapeHtml(c.observacao_admin || '')}</textarea>
-                </div>
-
-                <div>
-                  <label>Justificativa da negativa</label>
-                  <textarea onblur="alterarJustificativaNegativa('${c.id}', this.value)" placeholder="Preencha quando o chamado for negado...">${escapeHtml(c.justificativa_negativa || '')}</textarea>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button type="button" class="btn-danger" onclick="negarChamado('${c.id}')">⛔ Negar chamado</button>
-              </div>
-            </div>
-          ` : ''}
+                        <textarea onblur="alterarObservacao('${c.id}', this.value)" placeholder="Observações da triagem">${escapeHtml(c.observacao_admin || '')}</textarea>
+                        <textarea onblur="alterarJustificativaNegativa('${c.id}', this.value)" placeholder="Justificativa da negativa">${escapeHtml(c.justificativa_negativa || '')}</textarea>
+                        <button type="button" class="btn-danger" onclick="negarChamado('${c.id}')">Negar chamado</button>
+                      </div>
+                    </td>
+                  ` : ''}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
-      `).join('')
+      `
     }
 
     async function alterarSetor(id, setor) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar o setor.', 'erro')
-        return
-      }
-
-      try {
-        const { error } = await supabase
-          .from('chamados')
-          .update({ setor_responsavel: setor || null })
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update setor:', error)
-          showMessage('Erro ao atualizar setor: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Setor atualizado com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão setor:', e)
-        showMessage('Erro de conexão ao atualizar setor.', 'erro')
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar o setor.', 'erro')
+      const { error } = await supabase.from('chamados').update({ setor_responsavel: setor || null }).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar setor: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Setor atualizado com sucesso.', 'ok')
     }
 
     async function alterarStatus(id, status) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar o status.', 'erro')
-        return
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar o status.', 'erro')
 
       if (status === 'Negado') {
         const chamado = chamados.find(c => c.id === id)
         const justificativa = (chamado?.justificativa_negativa || '').trim()
-
         if (!justificativa) {
           showMessage('Para negar o chamado, preencha a justificativa da negativa.', 'erro')
           await loadTickets()
@@ -1054,145 +1035,49 @@
         }
       }
 
-      try {
-        const updateData = { status }
+      const updateData = { status }
+      if (status !== 'Negado') updateData.justificativa_negativa = null
 
-        if (status !== 'Negado') {
-          updateData.justificativa_negativa = null
-        }
-
-        const { error } = await supabase
-          .from('chamados')
-          .update(updateData)
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update status:', error)
-          showMessage('Erro ao atualizar status: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Status atualizado com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão status:', e)
-        showMessage('Erro de conexão ao atualizar status.', 'erro')
-      }
+      const { error } = await supabase.from('chamados').update(updateData).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar status: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Status atualizado com sucesso.', 'ok')
     }
 
     async function alterarPrioridade(id, prioridade) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar a prioridade.', 'erro')
-        return
-      }
-
-      try {
-        const { error } = await supabase
-          .from('chamados')
-          .update({ prioridade })
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update prioridade:', error)
-          showMessage('Erro ao atualizar prioridade: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Prioridade atualizada com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão prioridade:', e)
-        showMessage('Erro de conexão ao atualizar prioridade.', 'erro')
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar a prioridade.', 'erro')
+      const { error } = await supabase.from('chamados').update({ prioridade }).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar prioridade: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Prioridade atualizada com sucesso.', 'ok')
     }
 
     async function alterarResponsavel(id, responsavel) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar o responsável.', 'erro')
-        return
-      }
-
-      try {
-        const { error } = await supabase
-          .from('chamados')
-          .update({ responsavel_designado: responsavel || null })
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update responsável:', error)
-          showMessage('Erro ao atualizar responsável: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Responsável designado atualizado com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão responsável:', e)
-        showMessage('Erro de conexão ao atualizar responsável.', 'erro')
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar o responsável.', 'erro')
+      const { error } = await supabase.from('chamados').update({ responsavel_designado: responsavel || null }).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar responsável: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Responsável designado atualizado com sucesso.', 'ok')
     }
 
     async function alterarObservacao(id, observacao) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar observações.', 'erro')
-        return
-      }
-
-      try {
-        const texto = observacao.trim()
-
-        const { error } = await supabase
-          .from('chamados')
-          .update({ observacao_admin: texto || null })
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update observação:', error)
-          showMessage('Erro ao atualizar observação: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Observações da triagem atualizadas com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão observação:', e)
-        showMessage('Erro de conexão ao atualizar observação.', 'erro')
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar observações.', 'erro')
+      const { error } = await supabase.from('chamados').update({ observacao_admin: observacao.trim() || null }).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar observação: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Observações da triagem atualizadas com sucesso.', 'ok')
     }
 
     async function alterarJustificativaNegativa(id, justificativa) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode alterar a justificativa.', 'erro')
-        return
-      }
-
-      try {
-        const texto = justificativa.trim()
-
-        const { error } = await supabase
-          .from('chamados')
-          .update({ justificativa_negativa: texto || null })
-          .eq('id', id)
-
-        if (error) {
-          console.error('Erro update justificativa:', error)
-          showMessage('Erro ao atualizar justificativa: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Justificativa da negativa atualizada com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão justificativa:', e)
-        showMessage('Erro de conexão ao atualizar justificativa.', 'erro')
-      }
+      if (!adminMode) return showMessage('Somente administrador pode alterar a justificativa.', 'erro')
+      const { error } = await supabase.from('chamados').update({ justificativa_negativa: justificativa.trim() || null }).eq('id', id)
+      if (error) return showMessage('Erro ao atualizar justificativa: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Justificativa da negativa atualizada com sucesso.', 'ok')
     }
 
     async function negarChamado(id) {
-      if (!adminMode) {
-        showMessage('Somente administrador pode negar chamado.', 'erro')
-        return
-      }
+      if (!adminMode) return showMessage('Somente administrador pode negar chamado.', 'erro')
 
       const chamado = chamados.find(c => c.id === id)
       const justificativa = (chamado?.justificativa_negativa || '').trim()
@@ -1202,28 +1087,15 @@
         return
       }
 
-      try {
-        const { error } = await supabase
-          .from('chamados')
-          .update({
-            status: 'Negado',
-            setor_responsavel: null,
-            responsavel_designado: null
-          })
-          .eq('id', id)
+      const { error } = await supabase.from('chamados').update({
+        status: 'Negado',
+        setor_responsavel: null,
+        responsavel_designado: null
+      }).eq('id', id)
 
-        if (error) {
-          console.error('Erro negar chamado:', error)
-          showMessage('Erro ao negar chamado: ' + error.message, 'erro')
-          return
-        }
-
-        await loadTickets()
-        showMessage('Chamado negado com sucesso.', 'ok')
-      } catch (e) {
-        console.error('Erro conexão negar chamado:', e)
-        showMessage('Erro de conexão ao negar chamado.', 'erro')
-      }
+      if (error) return showMessage('Erro ao negar chamado: ' + error.message, 'erro')
+      await loadTickets()
+      showMessage('Chamado negado com sucesso.', 'ok')
     }
 
     function clearForm() {
@@ -1244,6 +1116,8 @@
     $('busca').addEventListener('input', renderTickets)
     $('filtroStatus').addEventListener('change', renderTickets)
     $('filtroSetor').addEventListener('change', renderTickets)
+    $('filtroResponsavel').addEventListener('change', renderTickets)
+    $('somenteNegados').addEventListener('change', renderTickets)
 
     window.alterarSetor = alterarSetor
     window.alterarStatus = alterarStatus
