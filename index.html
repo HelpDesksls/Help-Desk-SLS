@@ -343,6 +343,19 @@
       border-radius: 16px;
       padding: 12px 10px;
       text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      user-select: none;
+    }
+
+    .stat:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-color: #b9c4cc;
+    }
+
+    .stat:active {
+      transform: scale(0.98);
     }
 
     .stat .num {
@@ -787,14 +800,32 @@
       <div class="top-grid">
         <div class="card">
           <h2>📊 Resumo dos chamados</h2>
-          <div class="sub">Visão rápida</div>
+          <div class="sub">Toque em uma caixa para abrir a lista completa na aba Chamados.</div>
           <div class="stats">
-            <div class="stat"><div class="num" id="stTotal">0</div><div class="lab">Total</div></div>
-            <div class="stat"><div class="num" id="stAguardando">0</div><div class="lab">Aguardando</div></div>
-            <div class="stat"><div class="num" id="stEncaminhado">0</div><div class="lab">Encaminhado</div></div>
-            <div class="stat"><div class="num" id="stAndamento">0</div><div class="lab">Em andamento</div></div>
-            <div class="stat"><div class="num" id="stFinalizado">0</div><div class="lab">Finalizado</div></div>
-            <div class="stat"><div class="num" id="stNegado">0</div><div class="lab">Negado</div></div>
+            <div class="stat" data-status="">
+              <div class="num" id="stTotal">0</div>
+              <div class="lab">Total</div>
+            </div>
+            <div class="stat" data-status="Aguardando triagem">
+              <div class="num" id="stAguardando">0</div>
+              <div class="lab">Aguardando</div>
+            </div>
+            <div class="stat" data-status="Encaminhado">
+              <div class="num" id="stEncaminhado">0</div>
+              <div class="lab">Encaminhado</div>
+            </div>
+            <div class="stat" data-status="Em andamento">
+              <div class="num" id="stAndamento">0</div>
+              <div class="lab">Em andamento</div>
+            </div>
+            <div class="stat" data-status="Finalizado">
+              <div class="num" id="stFinalizado">0</div>
+              <div class="lab">Finalizado</div>
+            </div>
+            <div class="stat" data-status="Negado">
+              <div class="num" id="stNegado">0</div>
+              <div class="lab">Negado</div>
+            </div>
           </div>
         </div>
 
@@ -1153,6 +1184,16 @@
       $('filtroSetor').value = ''
       $('filtroResponsavel').value = ''
       $('somenteNegados').checked = false
+      renderTickets()
+    }
+
+    function abrirChamadosPorStatus(status = '') {
+      $('busca').value = ''
+      $('filtroStatus').value = status
+      $('filtroSetor').value = ''
+      $('filtroResponsavel').value = ''
+      $('somenteNegados').checked = false
+      trocarTela('chamados')
       renderTickets()
     }
 
@@ -1664,6 +1705,12 @@
 
     document.querySelectorAll('.tabbar button').forEach(btn => {
       btn.addEventListener('click', () => trocarTela(btn.dataset.screen))
+    })
+
+    document.querySelectorAll('.stat').forEach(stat => {
+      stat.addEventListener('click', () => {
+        abrirChamadosPorStatus(stat.dataset.status || '')
+      })
     })
 
     $('btnAbrir').addEventListener('click', createTicket)
