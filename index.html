@@ -595,6 +595,24 @@
       gap: 10px;
     }
 
+    .home-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .home-toggle-all-btn {
+      width: auto;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--wa-border);
+      background: #eef2f5;
+      color: #233138;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .home-item {
       border: 1px solid #e5e7eb;
       background: #fff;
@@ -608,7 +626,11 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 6px;
+    }
+
+    .home-item-top-left {
+      min-width: 0;
+      flex: 1;
     }
 
     .home-item-titulo {
@@ -616,6 +638,37 @@
       font-size: 14px;
       color: #111b21;
       line-height: 1.35;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .home-item-top-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .home-toggle-btn {
+      width: auto;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid #d7dde2;
+      background: #f4f6f8;
+      color: #24343d;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .home-item-details {
+      margin-top: 10px;
+      display: block;
+    }
+
+    .home-item-details.hidden {
+      display: none;
     }
 
     .home-item-meta {
@@ -758,6 +811,14 @@
         min-height: 26px;
         font-size: 9.5px;
       }
+
+      .home-item-top {
+        gap: 10px;
+      }
+
+      .home-item-top-right {
+        align-items: flex-end;
+      }
     }
 
     @media (min-width: 721px) {
@@ -841,6 +902,9 @@
       <div class="card">
         <h2>📋 Chamados abertos</h2>
         <div class="sub">Resumo rápido dos chamados que ainda não foram finalizados.</div>
+        <div class="home-actions">
+          <button id="btnToggleAllHome" type="button" class="home-toggle-all-btn">Expandir todos</button>
+        </div>
         <div id="homeListaAbertos" class="home-lista"></div>
       </div>
     </section>
@@ -1035,6 +1099,7 @@
     let adminMode = localStorage.getItem('helpdesk_admin_mode') === 'true'
     let usuarioSolicitante = null
     let timerUpdater = null
+    let homeExpandedState = {}
 
     function showMessage(text, type = 'ok') {
       const box = $('mensagem')
@@ -1477,29 +1542,96 @@
 
     function buildHomeItemHTML(c) {
       const tempo = getTempoChamado(c)
+      const expanded = !!homeExpandedState[String(c.id)]
+
       return `
         <div class="home-item">
           <div class="home-item-top">
-            <div class="home-item-titulo">${escapeHtml(c.titulo || '-')}</div>
-            <span class="badge ${statusClass(c.status)}">${escapeHtml(c.status || '-')}</span>
+            <div class="home-item-top-left">
+              <div class="home-item-titulo">${escapeHtml(c.titulo || '-')}</div>
+              <span class="badge ${statusClass(c.status)}">${escapeHtml(c.status || '-')}</span>
+            </div>
+
+            <div class="home-item-top-right">
+              <button
+                type="button"
+                class="home-toggle-btn"
+                data-home-toggle-btn="${escapeHtml(c.id)}"
+                onclick="toggleHomeDetails('${escapeHtml(c.id)}')"
+              >
+                ${expanded ? '🔼 Recolher' : '🔽 Expandir'}
+              </button>
+            </div>
           </div>
 
-          <div class="mini-badges">
-            <span class="badge ${priorityClass(c.prioridade)}">${escapeHtml(c.prioridade || '-')}</span>
-            <span class="badge">📍 ${escapeHtml(c.local || '-')}</span>
-            <span class="badge">🏢 ${escapeHtml(c.setor_responsavel || 'B4')}</span>
-          </div>
+          <div class="home-item-details ${expanded ? '' : 'hidden'}" data-home-details="${escapeHtml(c.id)}">
+            <div class="mini-badges">
+              <span class="badge ${priorityClass(c.prioridade)}">${escapeHtml(c.prioridade || '-')}</span>
+              <span class="badge">📍 ${escapeHtml(c.local || '-')}</span>
+              <span class="badge">🏢 ${escapeHtml(c.setor_responsavel || 'B4')}</span>
+            </div>
 
-          <div class="timer-box ${tempo.classe}" style="margin-top:10px;">
-            <div class="timer-label">${tempo.label}</div>
-            <div class="timer-value" data-home-timer="${escapeHtml(c.id)}">${tempo.valor}</div>
-          </div>
+            <div class="timer-box ${tempo.classe}" style="margin-top:10px;">
+              <div class="timer-label">${tempo.label}</div>
+              <div class="timer-value" data-home-timer="${escapeHtml(c.id)}">${tempo.valor}</div>
+            </div>
 
-          <div class="home-item-meta">
-            <div><strong>Abertura:</strong> ${escapeHtml(formatDate(c.created_at))}</div>
+            <div class="home-item-meta">
+              <div><strong>Abertura:</strong> ${escapeHtml(formatDate(c.created_at))}</div>
+            </div>
           </div>
         </div>
       `
+    }
+
+    function updateHomeToggleAllButton() {
+      const btn = $('btnToggleAllHome')
+      if (!btn) return
+
+      const ids = Object.keys(homeExpandedState)
+      if (!ids.length) {
+        btn.textContent = 'Expandir todos'
+        return
+      }
+
+      const todosExpandidos = ids.every(id => homeExpandedState[id] === true)
+      btn.textContent = todosExpandidos ? 'Recolher todos' : 'Expandir todos'
+    }
+
+    function setHomeItemExpanded(id, expanded) {
+      homeExpandedState[String(id)] = expanded
+
+      const details = document.querySelector(`[data-home-details="${CSS.escape(String(id))}"]`)
+      const btn = document.querySelector(`[data-home-toggle-btn="${CSS.escape(String(id))}"]`)
+
+      if (details) {
+        details.classList.toggle('hidden', !expanded)
+      }
+
+      if (btn) {
+        btn.textContent = expanded ? '🔼 Recolher' : '🔽 Expandir'
+      }
+
+      updateHomeToggleAllButton()
+    }
+
+    function toggleHomeDetails(id) {
+      const atual = !!homeExpandedState[String(id)]
+      setHomeItemExpanded(id, !atual)
+    }
+
+    function toggleAllHomeItems() {
+      const ids = Object.keys(homeExpandedState)
+      if (!ids.length) return
+
+      const todosExpandidos = ids.every(id => homeExpandedState[id] === true)
+      const novoEstado = !todosExpandidos
+
+      ids.forEach(id => {
+        setHomeItemExpanded(id, novoEstado)
+      })
+
+      updateHomeToggleAllButton()
     }
 
     function renderHomeOpenList() {
@@ -1514,13 +1646,21 @@
         })
         .slice(0, 8)
 
+      const novoEstado = {}
+      abertos.forEach(c => {
+        novoEstado[String(c.id)] = homeExpandedState[String(c.id)] || false
+      })
+      homeExpandedState = novoEstado
+
       if (!abertos.length) {
         container.innerHTML = `<div class="home-vazio">Nenhum chamado aberto no momento.</div>`
+        updateHomeToggleAllButton()
         return
       }
 
       container.innerHTML = abertos.map(buildHomeItemHTML).join('')
       updateHomeTimers()
+      updateHomeToggleAllButton()
     }
 
     function renderTickets() {
@@ -1717,6 +1857,8 @@
     $('btnLimpar').addEventListener('click', clearForm)
     $('btnEntrarAdmin').addEventListener('click', enterAdminMode)
     $('btnSairAdmin').addEventListener('click', exitAdminMode)
+    $('btnToggleAllHome').addEventListener('click', toggleAllHomeItems)
+
     $('busca').addEventListener('input', renderTickets)
     $('filtroStatus').addEventListener('change', renderTickets)
     $('filtroSetor').addEventListener('change', renderTickets)
@@ -1747,6 +1889,7 @@
     window.alterarObservacao = alterarObservacao
     window.alterarJustificativaNegativa = alterarJustificativaNegativa
     window.negarChamado = negarChamado
+    window.toggleHomeDetails = toggleHomeDetails
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
