@@ -1449,10 +1449,13 @@
             <span class="badge">🏢 ${escapeHtml(c.setor_responsavel || 'B4')}</span>
           </div>
 
+          <div class="timer-box ${tempo.classe}" style="margin-top:10px;">
+            <div class="timer-label">${tempo.label}</div>
+            <div class="timer-value" data-home-timer="${escapeHtml(c.id)}">${tempo.valor}</div>
+          </div>
+
           <div class="home-item-meta">
-            <div><strong>Solicitante:</strong> ${escapeHtml(c.nome_solicitante || '-')}</div>
-            <div><strong>Responsável:</strong> ${escapeHtml(c.responsavel_designado || 'Não definido')}</div>
-            <div><strong>Tempo:</strong> <span data-home-timer="${escapeHtml(c.id)}">${tempo.valor}</span></div>
+            <div><strong>Abertura:</strong> ${escapeHtml(formatDate(c.created_at))}</div>
           </div>
         </div>
       `
