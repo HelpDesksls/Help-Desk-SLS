@@ -44,8 +44,7 @@
 
     body {
       margin: 0;
-      background:
-        linear-gradient(180deg, var(--wa-header) 0 120px, var(--wa-bg) 120px 100%);
+      background: linear-gradient(180deg, var(--wa-header) 0 120px, var(--wa-bg) 120px 100%);
       color: var(--wa-text);
       min-height: 100vh;
     }
@@ -72,7 +71,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 14px 14px 10px;
+      padding: 12px 14px;
     }
 
     .wa-profile {
@@ -80,27 +79,29 @@
       align-items: center;
       gap: 10px;
       min-width: 0;
+      flex: 1;
     }
 
     .wa-avatar {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
-      font-size: 24px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: 22px;
       flex-shrink: 0;
     }
 
     .wa-title-wrap {
       min-width: 0;
+      flex: 1;
     }
 
     .wa-title {
       margin: 0;
-      font-size: 1.02rem;
+      font-size: 1rem;
       line-height: 1.1;
       font-weight: bold;
       white-space: nowrap;
@@ -110,57 +111,73 @@
 
     .wa-subtitle {
       margin-top: 3px;
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.92;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .admin-painel {
+    .admin-inline {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 6px;
-      width: 148px;
       flex-shrink: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 10px;
+      gap: 5px;
+      padding: 7px 10px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: bold;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
       color: #fff;
       text-align: center;
+      white-space: nowrap;
+      min-height: 30px;
+    }
+
+    .pill.small {
+      padding: 6px 9px;
+      font-size: 10px;
+      min-height: 30px;
     }
 
     .pill.on {
-      background: rgba(37, 211, 102, 0.22);
-    }
-
-    .wa-header-actions {
-      display: flex;
-      gap: 8px;
-      padding: 0 14px 12px;
+      background: rgba(37, 211, 102, 0.18);
+      border-color: rgba(37, 211, 102, 0.28);
     }
 
     .wa-mini-btn {
       border: 0;
       border-radius: 999px;
-      padding: 10px 12px;
-      font-size: 12px;
+      padding: 8px 10px;
+      font-size: 11px;
       font-weight: bold;
       cursor: pointer;
-      background: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.13);
       color: #fff;
-      width: 100%;
+      width: auto;
+      min-width: auto;
+      white-space: nowrap;
+      min-height: 30px;
+    }
+
+    .wa-mini-btn.compact {
+      padding: 6px 10px;
+      font-size: 10px;
+      min-height: 30px;
     }
 
     .wa-mini-btn.sec {
-      background: rgba(0,0,0,0.18);
+      background: rgba(0,0,0,0.16);
     }
 
     .screen {
@@ -564,6 +581,47 @@
       gap: 4px;
     }
 
+    @media (max-width: 720px) {
+      .wa-head {
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .wa-profile {
+        align-items: flex-start;
+      }
+
+      .wa-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 21px;
+      }
+
+      .wa-title {
+        font-size: 0.95rem;
+        white-space: normal;
+        line-height: 1.15;
+      }
+
+      .wa-subtitle {
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: normal;
+      }
+
+      .admin-inline {
+        gap: 5px;
+        max-width: 132px;
+      }
+
+      .pill.small,
+      .wa-mini-btn.compact {
+        font-size: 10px;
+        padding: 5px 8px;
+        min-height: 28px;
+      }
+    }
+
     @media (min-width: 721px) {
       .app { max-width: 950px; }
       .screen { padding: 14px; }
@@ -590,14 +648,11 @@
           </div>
         </div>
 
-        <div class="admin-painel">
-          <div id="adminStatus" class="pill">👤 Modo usuário</div>
+        <div class="admin-inline">
+          <div id="adminStatus" class="pill small">👤 Usuário</div>
+          <button id="btnEntrarAdmin" type="button" class="wa-mini-btn compact">🔐 Admin</button>
+          <button id="btnSairAdmin" type="button" class="wa-mini-btn sec compact hidden">🚪 Sair</button>
         </div>
-      </div>
-
-      <div class="wa-header-actions">
-        <button id="btnEntrarAdmin" type="button" class="wa-mini-btn">🔐 Entrar admin</button>
-        <button id="btnSairAdmin" type="button" class="wa-mini-btn sec hidden">🚪 Sair admin</button>
       </div>
     </div>
 
@@ -852,12 +907,12 @@
       const exitBtn = $('btnSairAdmin')
 
       if (adminMode) {
-        status.textContent = '🛡️ Modo administrador'
+        status.textContent = '🛡️ Admin'
         status.classList.add('on')
         enterBtn.classList.add('hidden')
         exitBtn.classList.remove('hidden')
       } else {
-        status.textContent = '👤 Modo usuário'
+        status.textContent = '👤 Usuário'
         status.classList.remove('on')
         enterBtn.classList.remove('hidden')
         exitBtn.classList.add('hidden')
