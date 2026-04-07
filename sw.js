@@ -1,4 +1,4 @@
-const CACHE_NAME = 'helpdesk-whatsapp-v7';
+const CACHE_NAME = 'helpdesk-whatsapp-v8';
 
 const ASSETS = [
   './',
