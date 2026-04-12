@@ -1,8 +1,9 @@
 {
   "name": "📋 Chamados de Manutenção • CB SLS",
   "short_name": "Chamados",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#efeae2",
   "theme_color": "#075E54",
   "orientation": "portrait",
