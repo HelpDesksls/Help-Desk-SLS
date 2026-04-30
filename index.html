@@ -1335,58 +1335,41 @@
       if (nomesUsados.includes(atual)) filtro.value = atual
     }
 
-    async function createTicket() {
-      const nome = String($('nome').value || '').trim().toUpperCase()
-      const matricula = normalizarIdFunc($('matricula').value)
-      const titulo = String($('titulo').value || '').trim().toUpperCase()
-      const descricao = $('descricao').value.trim()
-      const local = String($('local').value || '').trim().toUpperCase()
+    <!-- SUBSTITUA APENAS ESSE TRECHO DA FUNÇÃO createTicket -->
 
-      if (!titulo) {
-        showMessage('Preencha o título do chamado.', 'erro')
-        return
-      }
+async function createTicket() {
+  const nome = String($('nome').value || '').trim().toUpperCase()
+  const matricula = normalizarIdFunc($('matricula').value)
+  const titulo = String($('titulo').value || '').trim().toUpperCase()
+  const descricao = $('descricao').value.trim()
+  const local = String($('local').value || '').trim().toUpperCase()
 
-      if (!descricao) {
-        showMessage('Preencha a descrição do chamado.', 'erro')
-        return
-      }
+  if (!titulo) {
+    showMessage('Preencha o título do chamado.', 'erro')
+    return
+  }
 
-      salvarIdentificacaoLocal()
+  // ✅ DESCRIÇÃO NÃO É MAIS OBRIGATÓRIA
 
-      try {
-        const { error } = await supabase
-          .from('chamados')
-          .insert([{
-            nome_solicitante: nome || 'NÃO IDENTIFICADO',
-            matricula_solicitante: matricula || null,
-            titulo,
-            descricao,
-            local,
-            prioridade: PRIORIDADE_PADRAO,
-            status: 'Aguardando triagem',
-            setor_responsavel: SETOR_FIXO,
-            observacao_admin: null,
-            responsavel_designado: null,
-            justificativa_negativa: null
-          }])
+  salvarIdentificacaoLocal()
 
-        if (error) {
-          console.error(error)
-          showMessage('Erro ao registrar chamado: ' + error.message, 'erro')
-          return
-        }
+  const { error } = await supabase.from('chamados').insert([{
+    nome_solicitante: nome || 'NÃO IDENTIFICADO',
+    matricula_solicitante: matricula || null,
+    titulo,
+    descricao,
+    local,
+    prioridade: PRIORIDADE_PADRAO,
+    status: 'Aguardando triagem',
+    setor_responsavel: SETOR_FIXO
+  }])
 
-        clearForm()
-        atualizarEstadoFormulario()
-        await loadTickets(false)
-        showMessage('Chamado registrado com sucesso.', 'ok')
-        trocarTela('chamados')
-      } catch (e) {
-        console.error(e)
-        showMessage('Erro de conexão ao registrar chamado.', 'erro')
-      }
-    }
+  if (error) return showMessage(error.message, 'erro')
+
+  clearForm()
+  await loadTickets(false)
+  showMessage('Chamado registrado com sucesso.', 'ok')
+}
 
     async function loadTickets(showToast = true) {
       try {
@@ -1446,69 +1429,6 @@
     }
 
     function buildTicketHTML(c) {
-      return `
-        <div class="ticket ${ticketClass(c.prioridade, c.status)}">
-          ${isResolved(c.status) ? `<div class="resolved-seal">✅ Resolvido</div>` : ''}
-
-          <div class="ticket-head">
-            <div>
-              <div class="ticket-title">${escapeHtml(c.titulo || '-')}</div>
-              <div class="ticket-sub">${escapeHtml(c.descricao || '')}</div>
-            </div>
-          </div>
-
-          <div class="mini-badges">
-            <span class="badge ${statusClass(c.status)}">${escapeHtml(c.status || '-')}</span>
-            <span class="badge ${priorityClass(c.prioridade)}">${escapeHtml(c.prioridade || '-')}</span>
-            <span class="badge">📍 ${escapeHtml(c.local || '-')}</span>
-            <span class="badge">🏢 ${escapeHtml(c.setor_responsavel || 'Não definido')}</span>
-          </div>
-
-          ${buildTimerHTML(c)}
-
-         <div class="meta">
-  ${MOSTRAR_IDENTIDADE_SOLICITANTE ? `
-    <div><strong>Solicitante:</strong> ${escapeHtml(c.nome_solicitante || '-')}</div>
-    <div><strong>Matrícula:</strong> ${escapeHtml(c.matricula_solicitante || '-')}</div>
-  ` : ''}
-
-  <div><strong>Responsável:</strong> ${escapeHtml(c.responsavel_designado || 'Não definido')}</div>
-  <div><strong>Abertura:</strong> ${escapeHtml(formatDate(c.created_at))}</div>
-</div>
-
-          ${c.observacao_admin ? `<div class="obs-box"><strong>Observação da triagem:</strong><br>${escapeHtml(c.observacao_admin)}</div>` : ''}
-          ${c.justificativa_negativa ? `<div class="neg-box"><strong>Justificativa da negativa:</strong><br>${escapeHtml(c.justificativa_negativa)}</div>` : ''}
-
-          ${adminMode ? `
-            <div class="admin-area">
-              <div class="chip">🏢 Setor fixo: B4</div>
-
-              <select onchange="alterarStatus('${c.id}', this.value)">
-                <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
-                <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
-                <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-                <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
-              </select>
-
-              <select onchange="alterarPrioridade('${c.id}', this.value)">
-                <option value="Baixa" ${c.prioridade === 'Baixa' ? 'selected' : ''}>Prioridade: Baixa</option>
-                <option value="Média" ${c.prioridade === 'Média' ? 'selected' : ''}>Prioridade: Média</option>
-                <option value="Alta" ${c.prioridade === 'Alta' ? 'selected' : ''}>Prioridade: Alta</option>
-              </select>
-
-              <select onchange="alterarResponsavel('${c.id}', this.value)">
-                ${responsavelOptions(c.responsavel_designado || '')}
-              </select>
-
-              <textarea onblur="alterarObservacao('${c.id}', this.value)" placeholder="Observações da triagem">${escapeHtml(c.observacao_admin || '')}</textarea>
-              <textarea onblur="alterarJustificativaNegativa('${c.id}', this.value)" placeholder="Justificativa da negativa">${escapeHtml(c.justificativa_negativa || '')}</textarea>
-              <button type="button" class="btn-danger" onclick="negarChamado('${c.id}')">Negar chamado</button>
-            </div>
-          ` : ''}
-        </div>
-      `
-    }
 
     function buildHomeItemHTML(c) {
       const tempo = getTempoChamado(c)
@@ -1851,43 +1771,80 @@
       atualizarEstadoFormulario()
     })
 
-    $('btnLimparIdentificacao').addEventListener('click', () => limparUsuarioLocal(true))
+ // 🔹 Botão limpar identificação (seguro)
+document.getElementById('btnLimparIdentificacao')
+  ?.addEventListener('click', () => limparUsuarioLocal(true))
 
-    window.alterarStatus = alterarStatus
-    window.alterarPrioridade = alterarPrioridade
-    window.alterarResponsavel = alterarResponsavel
-    window.alterarObservacao = alterarObservacao
-    window.alterarJustificativaNegativa = alterarJustificativaNegativa
-    window.negarChamado = negarChamado
-    window.toggleHomeDetails = toggleHomeDetails
+// 🔹 Funções principais (admin)
 
+async function alterarValorCompra(id, valor) {
+  if (!adminMode) return
 
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault()
-      deferredPrompt = event
-      atualizarBotaoInstalarApp()
-    })
+  const { error } = await supabase
+    .from('chamados')
+    .update({ valor_compra: valor ? parseFloat(valor) : null })
+    .eq('id', id)
 
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null
-      atualizarBotaoInstalarApp()
-      showMessage('App instalado com sucesso.', 'ok')
-    })
+  if (error) {
+    showMessage('Erro valor: ' + error.message, 'erro')
+  } else {
+    showMessage('Valor atualizado', 'ok')
+  }
+}
 
-    if ('serviceWorker' in navigator) {
+async function alterarDataCompra(id, data) {
+  if (!adminMode) return
+
+  const { error } = await supabase
+    .from('chamados')
+    .update({ data_compra: data || null })
+    .eq('id', id)
+
+  if (error) {
+    showMessage('Erro data: ' + error.message, 'erro')
+  } else {
+    showMessage('Data atualizada', 'ok')
+  }
+}
+
+// 🔹 Expor funções no escopo global (necessário pro HTML funcionar)
+
+window.alterarStatus = alterarStatus
+window.alterarPrioridade = alterarPrioridade
+window.alterarResponsavel = alterarResponsavel
+window.alterarObservacao = alterarObservacao
+window.alterarJustificativaNegativa = alterarJustificativaNegativa
+window.negarChamado = negarChamado
+window.toggleHomeDetails = toggleHomeDetails
+
+window.alterarValorCompra = alterarValorCompra
+window.alterarDataCompra = alterarDataCompra
+
+// 🔹 PWA install handler
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault()
+  deferredPrompt = event
+  atualizarBotaoInstalarApp()
+})
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null
+  atualizarBotaoInstalarApp()
+  showMessage('App instalado com sucesso.', 'ok')
+})
+
+// 🔹 Service Worker + atualização automática
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(reg => {
 
-      // Detecta nova versão
       reg.onupdatefound = () => {
         const newWorker = reg.installing
-
         if (!newWorker) return
 
         newWorker.onstatechange = () => {
           if (newWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // Nova versão disponível
               if (confirm('Nova versão disponível. Atualizar agora?')) {
                 window.location.reload()
               }
@@ -1899,7 +1856,6 @@
     }).catch(() => {})
   })
 }
-
     updateAdminUI()
     carregarUsuarioLocal()
     limparFiltros()
