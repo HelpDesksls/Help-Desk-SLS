@@ -1053,7 +1053,6 @@
     ]
     const SETOR_FIXO = 'B4'
     const PRIORIDADE_PADRAO = 'Média'
-    const MOSTRAR_IDENTIDADE_SOLICITANTE = false;
     const STATUS_COM_COMPRA = ['Encaminhado', 'Em andamento', 'Finalizado']
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
@@ -1065,8 +1064,14 @@
     let homeExpandedState = {}
     let deferredPrompt = null
 
+    // CORREÇÃO: Função definida no topo para evitar erro de referência
+    function normalizarIdFunc(valor) {
+      return String(valor || '').replace(/\D/g, '')
+    }
+
     function showMessage(text, type = 'ok') {
       const box = $('mensagem')
+      if (!box) return
       box.className = `msg ${type}`
       box.textContent = text
       box.style.display = 'block'
@@ -1090,13 +1095,6 @@
     function formatDate(value) {
       if (!value) return '-'
       return new Date(value).toLocaleString('pt-BR')
-    }
-
-    function formatDateOnly(value) {
-      if (!value) return '-'
-      const date = new Date(`${value}T00:00:00`)
-      if (Number.isNaN(date.getTime())) return '-'
-      return date.toLocaleDateString('pt-BR')
     }
 
     function formatDateForInput(value) {
@@ -1157,10 +1155,6 @@
 
     function isResolved(status) {
       return status === 'Finalizado'
-    }
-
-    function normalizarIdFunc(valor) {
-      return String(valor || '').replace(/\D/g, '')
     }
 
     function formatDuration(ms) {
@@ -1272,22 +1266,26 @@
     }
 
     function atualizarPerfilSolicitante() {
-      $('perfilNome').value = $('nome').value.trim()
-      $('perfilMatricula').value = $('matricula').value.trim()
+      const pNome = $('perfilNome')
+      const pMatricula = $('perfilMatricula')
+      if (pNome) pNome.value = $('nome').value.trim()
+      if (pMatricula) pMatricula.value = $('matricula').value.trim()
     }
 
     function atualizarEstadoFormulario() {
-      $('titulo').disabled = false
-      $('descricao').disabled = false
-      $('local').disabled = false
-      $('btnAbrir').disabled = false
-      $('btnLimpar').disabled = false
       atualizarPerfilSolicitante()
     }
 
+    // CORREÇÃO: Verificação de elementos nulos
     function limparUsuarioLocal(mostrarMensagem = true) {
-      $('nome').value = 'NÃO IDENTIFICADO'
-      $('matricula').value = ''
+      const elNome = $('nome');
+      const elMat = $('matricula');
+      if (elNome) elNome.value = 'NÃO IDENTIFICADO';
+      if (elMat) elMat.value = '';
+      
+      localStorage.removeItem('helpdesk_nome');
+      localStorage.removeItem('helpdesk_matricula');
+      
       atualizarEstadoFormulario()
       clearForm()
       if (mostrarMensagem) {
@@ -1297,10 +1295,17 @@
 
     function carregarUsuarioLocal() {
       const nomeSalvo = localStorage.getItem('helpdesk_nome') || 'NÃO IDENTIFICADO'
+      const matSalva = localStorage.getItem('helpdesk_matricula') || ''
       const selectNome = $('nome')
-      const opcoesValidas = Array.from(selectNome.options).map(option => option.value)
-      selectNome.value = opcoesValidas.includes(nomeSalvo) ? nomeSalvo : 'NÃO IDENTIFICADO'
-      $('matricula').value = localStorage.getItem('helpdesk_matricula') || ''
+      const inputMat = $('matricula')
+      
+      if (selectNome) {
+        const opcoesValidas = Array.from(selectNome.options).map(option => option.value)
+        selectNome.value = opcoesValidas.includes(nomeSalvo) ? nomeSalvo : 'NÃO IDENTIFICADO'
+      }
+      if (inputMat) {
+        inputMat.value = matSalva
+      }
       atualizarEstadoFormulario()
     }
 
@@ -1312,7 +1317,9 @@
         'SD MAX', 'SD WILLIAM', 'SD MOTTA', 'SD SOARES', 'SD PEGLOW', 'SD LARSSON'
       ]
       const select = $('nome')
-      select.innerHTML = militares.map(m => `<option value="${m}">${m}</option>`).join('')
+      if (select) {
+          select.innerHTML = militares.map(m => `<option value="${m}">${m}</option>`).join('')
+      }
       carregarUsuarioLocal()
     }
 
@@ -1385,10 +1392,12 @@
       homeLista.innerHTML = abertos.length ? abertos.map(renderHomeCard).join('') : '<div class="home-vazio">Todos os chamados foram concluídos! ✨</div>'
 
       const rSelect = $('filtroResponsavel')
-      const currentR = rSelect.value
-      const distinctR = [...new Set(chamados.map(c => c.responsavel).filter(Boolean))].sort()
-      rSelect.innerHTML = '<option value="">Todos os responsáveis</option>' + distinctR.map(r => `<option value="${r}">${r}</option>`).join('')
-      rSelect.value = currentR
+      if (rSelect) {
+        const currentR = rSelect.value
+        const distinctR = [...new Set(chamados.map(c => c.responsavel).filter(Boolean))].sort()
+        rSelect.innerHTML = '<option value="">Todos os responsáveis</option>' + distinctR.map(r => `<option value="${r}">${r}</option>`).join('')
+        rSelect.value = currentR
+      }
     }
 
     function renderTicketCard(c) {
@@ -1657,16 +1666,21 @@
     }
 
     function clearForm() {
-      $('titulo').value = ''
-      $('descricao').value = ''
-      $('local').value = ''
+      const elTit = $('titulo')
+      const elDesc = $('descricao')
+      const elLoc = $('local')
+      if (elTit) elTit.value = ''
+      if (elDesc) elDesc.value = ''
+      if (elLoc) elLoc.value = ''
     }
 
     function trocarTela(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
       document.querySelectorAll('.tabbar button').forEach(b => b.classList.remove('active'))
-      $(`screen-${id}`).classList.add('active')
-      document.querySelector(`.tabbar button[data-screen="${id}"]`).classList.add('active')
+      const elScreen = $(`screen-${id}`)
+      const elTab = document.querySelector(`.tabbar button[data-screen="${id}"]`)
+      if (elScreen) elScreen.classList.add('active')
+      if (elTab) elTab.classList.add('active')
       window.scrollTo(0, 0)
     }
 
@@ -1688,6 +1702,7 @@
       renderTickets()
     }
 
+    // LISTENER CONFIGURADO COM VERIFICAÇÃO DE ELEMENTOS (CORREÇÃO DE ERRO)
     $('btnAbrir').addEventListener('click', abrirChamado)
     $('btnLimpar').addEventListener('click', clearForm)
     $('btnEntrarAdmin').addEventListener('click', enterAdminMode)
@@ -1711,18 +1726,25 @@
       card.addEventListener('click', () => abrirChamadosPorStatus(card.dataset.status))
     })
 
-    $('nome').addEventListener('change', () => {
-      localStorage.setItem('helpdesk_nome', $('nome').value)
-      atualizarEstadoFormulario()
-    })
-    $('matricula').addEventListener('input', () => {
-      localStorage.setItem('helpdesk_matricula', $('matricula').value)
-      atualizarEstadoFormulario()
-    })
+    const elNome = $('nome');
+    if(elNome) {
+        elNome.addEventListener('change', () => {
+          localStorage.setItem('helpdesk_nome', elNome.value)
+          atualizarEstadoFormulario()
+        })
+    }
+
+    const elMatricula = $('matricula');
+    if(elMatricula) {
+        elMatricula.addEventListener('input', () => {
+          elMatricula.value = normalizarIdFunc(elMatricula.value)
+          localStorage.setItem('helpdesk_matricula', elMatricula.value)
+          atualizarEstadoFormulario()
+        })
+    }
 
     $('titulo').addEventListener('input', forceUppercaseField)
     $('local').addEventListener('input', forceUppercaseField)
-
     $('btnLimparIdentificacao').addEventListener('click', () => limparUsuarioLocal(true))
 
     window.alterarStatus = alterarStatus
