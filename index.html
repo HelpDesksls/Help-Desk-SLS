@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Reclamações</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
             margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            min-height: 100vh;
         }
         .container {
             max-width: 1200px;
@@ -18,24 +24,25 @@
         .tabs {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
-        .tab-button {
+        .tab-btn {
             padding: 12px 24px;
-            background: #e9ecef;
-            border: none;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
-        .tab-button:hover {
-            background: #dee2e6;
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
-        .tab-button.active {
-            background: #007bff;
-            color: white;
+        .tab-btn.active {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
         }
         .tab-content {
             display: none;
@@ -44,352 +51,436 @@
             display: block;
         }
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .card h3 {
-            margin-top: 0;
-            color: #333;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
         }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-            color: #555;
+        h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        input, select, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
         }
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
         }
         button {
-            background: #28a745;
-            color: white;
-            padding: 12px 24px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
             border: none;
-            border-radius: 6px;
+            color: #ffffff;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-            transition: background 0.3s;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
         }
         button:hover {
-            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
         }
-        .chamados-list {
+        .lista-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+        .chamado-card {
+            position: relative;
+        }
+        .chamado-card h4 {
+            margin: 0 0 15px 0;
+            color: #007bff;
+        }
+        .actions {
+            margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 70vh;
+            gap: 10px;
+        }
+        .actions button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        .btn-edit {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        .btn-edit:hover {
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+        }
+        .btn-delete:hover {
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            position: relative;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
             overflow-y: auto;
-            padding: 10px 0;
         }
-        .chamado-edit, .chamado-view {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #007bff;
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 2.5em;
+            cursor: pointer;
+            color: #ffffff;
+            opacity: 0.7;
+            transition: opacity 0.3s;
         }
-        .chamado-edit select, .chamado-edit input {
-            max-width: 250px;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        .chamado-edit button {
-            background: #ffc107;
-            color: #212529;
-            margin-top: 0;
-        }
-        .chamado-edit button:hover {
-            background: #e0a800;
-        }
-        #extra-fields- * {
-            display: block;
-            margin: 10px 0;
-        }
-        small {
-            color: #888;
-            display: block;
-            margin-top: 10px;
+        .close:hover {
+            opacity: 1;
         }
         @media (max-width: 768px) {
             .tabs {
                 flex-direction: column;
             }
-            .card {
-                padding: 20px;
+            .lista-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => console.log('Service Worker registration failed:', err));
-            });
-        }
-    </script>
 </head>
 <body>
     <div class="container">
+        <h1 style="text-align: center; margin-bottom: 40px; font-size: 2.5em;">🛠️ Central de Reclamações</h1>
         <div class="tabs">
-            <button class="tab-button active" data-tab="tab-dados">👤 Dados do solicitante</button>
-            <button class="tab-button" data-tab="tab-novo">💬 Novo chamado</button>
-            <button class="tab-button" data-tab="tab-admin">🔧 Admin (Edição)</button>
-            <button class="tab-button" data-tab="tab-view">📋 Exibição de Chamados</button>
+            <button id="btn-novo" class="tab-btn active" onclick="showTab('novo')">📝 Novo Chamado</button>
+            <button id="btn-lista" class="tab-btn" onclick="showTab('lista')">📋 Lista de Chamados</button>
+            <button id="btn-admin" class="tab-btn" onclick="showTab('admin')">⚙️ Admin (Edição)</button>
         </div>
 
-        <div id="tab-dados" class="tab-content active">
-            <div class="card">
+        <!-- Aba Novo -->
+        <div id="aba-novo" class="tab-content active">
+            <div class="card" id="dados-solicitante">
                 <h3>👤 Dados do solicitante</h3>
-                <label for="solicitante">Nome:</label>
-                <select id="solicitante">
+                <select id="solicitante" required>
                     <option value="">Selecione...</option>
-                    <option>MILITAR 1</option>
-                    <option>MILITAR 2</option>
-                    <option>MILITAR 3</option>
-                    <option>MILITAR 4</option>
-                    <option>MILITAR 5</option>
-                    <option>NÃO IDENTIFICADO</option>
                 </select>
             </div>
-        </div>
-
-        <div id="tab-novo" class="tab-content">
-            <div class="card">
+            <div class="card" id="novo-chamado">
                 <h3>💬 Novo chamado</h3>
-                <p><strong>Solicitante:</strong> <span id="current-solicitante">-</span></p>
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" style="text-transform: uppercase;" required>
-                <label for="local">Local:</label>
-                <input type="text" id="local" style="text-transform: uppercase;" required>
-                <label for="descricao">Descrição:</label>
-                <textarea id="descricao" rows="5"></textarea>
-                <button id="createBtn">Criar Chamado</button>
+                <input id="titulo" placeholder="TÍTULO (será enviado em maiúsculas)" required>
+                <input id="local" placeholder="LOCAL (será enviado em maiúsculas)" required>
+                <textarea id="descricao" placeholder="Descrição (opcional)"></textarea>
+                <button onclick="criarChamado()">📤 Enviar Chamado</button>
             </div>
         </div>
 
-        <div id="tab-admin" class="tab-content">
-            <div class="card">
-                <h3>🔧 Painel de Admin (Edição)</h3>
-                <div id="admin-list" class="chamados-list"></div>
-            </div>
+        <!-- Aba Lista -->
+        <div id="aba-lista" class="tab-content">
+            <div id="lista-chamados" class="lista-grid"></div>
         </div>
 
-        <div id="tab-view" class="tab-content">
-            <div class="card">
-                <h3>📋 Exibição de Chamados</h3>
-                <div id="view-list" class="chamados-list"></div>
+        <!-- Aba Admin -->
+        <div id="aba-admin" class="tab-content">
+            <div id="lista-admin" class="lista-grid"></div>
+        </div>
+    </div>
+
+    <!-- Modal Edição -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content card">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>✏️ Editar Chamado</h3>
+            <div id="edit-form">
+                <input id="edit-id" type="hidden">
+                <input id="edit-solicitante" required>
+                <input id="edit-titulo" placeholder="TÍTULO" required>
+                <input id="edit-local" placeholder="LOCAL" required>
+                <textarea id="edit-descricao" placeholder="Descrição"></textarea>
+                <select id="edit-status" onchange="toggleCompraFields()" required>
+                    <option value="">Selecione status...</option>
+                    <option>Novo</option>
+                    <option>Em andamento</option>
+                    <option>Encaminhado</option>
+                    <option>Finalizado</option>
+                </select>
+                <input id="edit-valor" type="number" step="0.01" min="0" placeholder="Valor da Compra (R$)">
+                <input id="edit-data" type="date" placeholder="Data da Compra">
+                <button type="button" onclick="salvarEdicao()">💾 Salvar Alterações</button>
+                <button type="button" onclick="closeModal()" style="background: #6c757d; margin-top: 10px;">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Configure suas credenciais do Supabase originais aqui
-        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Configuração Supabase - SUBSTITUA pelas suas credenciais
+        const supabaseUrl = 'https://SEU-PROJETO.supabase.co';
+        const supabaseAnonKey = 'SUA-ANON-KEY';
 
-        let currentSolicitante = '';
+        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        const statusOptions = `
-            <option value="Aberto">Aberto</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Encaminhado">Encaminhado</option>
-            <option value="Finalizado">Finalizado</option>
-        `;
+        // Opções de solicitante
+        const solicitantesOptions = ['MILITAR 1', 'MILITAR 2', 'MILITAR 3', 'MILITAR 4', 'MILITAR 5', 'NÃO IDENTIFICADO'];
 
-        const showStatuses = ['Finalizado', 'Encaminhado', 'Em andamento'];
-
-        function openTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-            if (tabName === 'tab-admin') loadChamadosAdmin();
-            if (tabName === 'tab-view') loadChamadosView();
+        // Popular selects de solicitante
+        function populateSolicitantes(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Selecione...</option>';
+            solicitantesOptions.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
         }
 
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const tabName = button.dataset.tab;
-                openTab(tabName);
+        // Forçar uppercase
+        function forceUppercase(inputId) {
+            const input = document.getElementById(inputId);
+            input.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
             });
-        });
+        }
 
-        // Dados solicitante
-        document.getElementById('solicitante').addEventListener('change', (e) => {
-            currentSolicitante = e.target.value.toUpperCase();
-            document.getElementById('current-solicitante').textContent = currentSolicitante || '-';
-        });
+        // Mostrar/esconder campos de compra
+        function toggleCompraFields() {
+            const status = document.getElementById('edit-status').value;
+            const show = ['Finalizado', 'Encaminhado', 'Em andamento'].includes(status);
+            const valorField = document.getElementById('edit-valor');
+            const dataField = document.getElementById('edit-data');
+            if (show) {
+                valorField.style.display = 'block';
+                dataField.style.display = 'block';
+            } else {
+                valorField.style.display = 'none';
+                dataField.style.display = 'none';
+                valorField.value = '';
+                dataField.value = '';
+            }
+        }
 
-        // Novo chamado
-        document.getElementById('createBtn').addEventListener('click', async () => {
-            const tituloEl = document.getElementById('titulo');
-            const localEl = document.getElementById('local');
-            const descricaoEl = document.getElementById('descricao');
+        // Criar chamado
+        async function criarChamado() {
+            const solicitante = document.getElementById('solicitante').value;
+            const titulo = document.getElementById('titulo').value.toUpperCase();
+            const local = document.getElementById('local').value.toUpperCase();
+            const descricao = document.getElementById('descricao').value;
 
-            const titulo = tituloEl.value.toUpperCase().trim();
-            const local = localEl.value.toUpperCase().trim();
-            const descricao = descricaoEl.value.trim();
-
-            if (!currentSolicitante || !titulo || !local) {
-                alert('Por favor, preencha Solicitante, Título e Local obrigatórios.');
+            if (!solicitante || !titulo || !local) {
+                alert('Preencha os campos obrigatórios!');
                 return;
             }
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('chamados')
-                .insert([
-                    {
-                        solicitante: currentSolicitante,
-                        titulo,
-                        local,
-                        descricao,
-                        status: 'Aberto'
-                    }
-                ]);
+                .insert([{ solicitante, titulo, local, descricao, status: 'Novo' }]);
 
             if (error) {
                 alert('Erro ao criar chamado: ' + error.message);
             } else {
-                alert('Chamado criado com sucesso!');
-                tituloEl.value = '';
-                localEl.value = '';
-                descricaoEl.value = '';
+                document.getElementById('solicitante').value = '';
+                document.getElementById('titulo').value = '';
+                document.getElementById('local').value = '';
+                document.getElementById('descricao').value = '';
+                listarChamados();
+                listarAdmin();
             }
-        });
+        }
 
-        // Admin functions
-        async function loadChamadosAdmin() {
+        // Renderizar lista
+        async function renderList(containerId, showActions = false) {
+            const container = document.getElementById(containerId);
             const { data, error } = await supabase
                 .from('chamados')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) {
-                document.getElementById('admin-list').innerHTML = '<p>Erro ao carregar: ' + error.message + '</p>';
+                console.error('Erro ao listar:', error);
                 return;
             }
 
-            const container = document.getElementById('admin-list');
             container.innerHTML = '';
-
-            data.forEach(chamado => {
-                const div = document.createElement('div');
-                div.className = 'chamado-edit';
-                div.innerHTML = `
-                    <h4>${chamado.titulo}</h4>
-                    <p><strong>Solicitante:</strong> ${chamado.solicitante}</p>
-                    <p><strong>Local:</strong> ${chamado.local}</p>
-                    <p><strong>Descrição:</strong> ${chamado.descricao || 'N/A'}</p>
-                    <label>Status:</label>
-                    <select id="status-${chamado.id}">${statusOptions}</select>
-                    <div id="extra-fields-${chamado.id}" style="display: none;">
-                        <label for="valor-${chamado.id}">Valor da Compra:</label>
-                        <input type="number" step="0.01" id="valor-${chamado.id}" value="${chamado.valor_compra || ''}">
-                        <label for="data-${chamado.id}">Data da Compra:</label>
-                        <input type="date" id="data-${chamado.id}" value="${chamado.data_compra || ''}">
-                    </div>
-                    <button onclick="saveChamado('${chamado.id}')">Salvar Alterações</button>
-                    <small>${new Date(chamado.created_at).toLocaleString('pt-BR')}</small>
+            data.forEach(row => {
+                const card = document.createElement('div');
+                card.className = 'chamado-card card';
+                let actions = '';
+                if (showActions) {
+                    actions = `
+                        <div class="actions">
+                            <button class="btn-edit" onclick="editarChamado(${row.id})">Editar</button>
+                            <button class="btn-delete" onclick="deletarChamado(${row.id})">Deletar</button>
+                        </div>
+                    `;
+                }
+                const valorHtml = row.valor_compra ? `<p><strong>Valor da Compra:</strong> R$ ${parseFloat(row.valor_compra).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : '';
+                const dataHtml = row.data_compra ? `<p><strong>Data da Compra:</strong> ${new Date(row.data_compra).toLocaleDateString('pt-BR')}</p>` : '';
+                card.innerHTML = `
+                    <h4>${row.titulo}</h4>
+                    <p><strong>Solicitante:</strong> ${row.solicitante}</p>
+                    <p><strong>Local:</strong> ${row.local}</p>
+                    ${row.descricao ? `<p><strong>Descrição:</strong> ${row.descricao}</p>` : ''}
+                    <p><strong>Status:</strong> <span style="color: #007bff;">${row.status}</span></p>
+                    ${valorHtml}
+                    ${dataHtml}
+                    ${actions}
                 `;
-                container.appendChild(div);
-
-                const statusSelect = document.getElementById(`status-${chamado.id}`);
-                statusSelect.value = chamado.status;
-
-                statusSelect.addEventListener('change', () => {
-                    toggleExtraFields(chamado.id, statusSelect.value);
-                });
-
-                toggleExtraFields(chamado.id, chamado.status);
+                container.appendChild(card);
             });
         }
 
-        function toggleExtraFields(id, status) {
-            const extraDiv = document.getElementById(`extra-fields-${id}`);
-            extraDiv.style.display = showStatuses.includes(status) ? 'block' : 'none';
+        // Listas
+        const listarChamados = () => renderList('lista-chamados', false);
+        const listarAdmin = () => renderList('lista-admin', true);
+
+        // Editar
+        async function editarChamado(id) {
+            const { data, error } = await supabase.from('chamados').select('*').eq('id', id).single();
+            if (error) {
+                alert('Erro ao carregar: ' + error.message);
+                return;
+            }
+            document.getElementById('edit-id').value = data.id;
+            document.getElementById('edit-solicitante').value = data.solicitante;
+            document.getElementById('edit-titulo').value = data.titulo;
+            document.getElementById('edit-local').value = data.local;
+            document.getElementById('edit-descricao').value = data.descricao || '';
+            document.getElementById('edit-status').value = data.status;
+            document.getElementById('edit-valor').value = data.valor_compra || '';
+            document.getElementById('edit-data').value = data.data_compra || '';
+            toggleCompraFields();
+            document.getElementById('edit-modal').style.display = 'flex';
         }
 
-        window.saveChamado = async (id) => {
-            const statusSelect = document.getElementById(`status-${id}`);
-            const valorInput = document.getElementById(`valor-${id}`);
-            const dataInput = document.getElementById(`data-${id}`);
+        // Salvar edição
+        async function salvarEdicao() {
+            const id = document.getElementById('edit-id').value;
+            const solicitante = document.getElementById('edit-solicitante').value.toUpperCase();
+            const titulo = document.getElementById('edit-titulo').value.toUpperCase();
+            const local = document.getElementById('edit-local').value.toUpperCase();
+            const descricao = document.getElementById('edit-descricao').value;
+            const status = document.getElementById('edit-status').value;
+            const valor_compra = document.getElementById('edit-valor').value ? parseFloat(document.getElementById('edit-valor').value) : null;
+            const data_compra = document.getElementById('edit-data').value || null;
 
-            const updates = {
-                status: statusSelect.value
-            };
-
-            if (valorInput.value) {
-                updates.valor_compra = parseFloat(valorInput.value);
-            }
-            if (dataInput.value) {
-                updates.data_compra = dataInput.value;
+            if (!solicitante || !titulo || !local || !status) {
+                alert('Preencha os campos obrigatórios!');
+                return;
             }
 
             const { error } = await supabase
                 .from('chamados')
-                .update(updates)
+                .update({
+                    solicitante,
+                    titulo,
+                    local,
+                    descricao,
+                    status,
+                    valor_compra,
+                    data_compra
+                })
                 .eq('id', id);
 
             if (error) {
                 alert('Erro ao salvar: ' + error.message);
             } else {
-                alert('Alterações salvas com sucesso!');
+                closeModal();
+                listarChamados();
+                listarAdmin();
             }
-        };
+        }
 
-        // View functions
-        async function loadChamadosView() {
-            const { data, error } = await supabase
-                .from('chamados')
-                .select('*')
-                .order('created_at', { ascending: false });
-
+        // Deletar
+        async function deletarChamado(id) {
+            if (!confirm('Confirma a exclusão deste chamado?')) return;
+            const { error } = await supabase.from('chamados').delete().eq('id', id);
             if (error) {
-                document.getElementById('view-list').innerHTML = '<p>Erro ao carregar: ' + error.message + '</p>';
-                return;
+                alert('Erro ao deletar: ' + error.message);
+            } else {
+                listarChamados();
+                listarAdmin();
             }
+        }
 
-            const container = document.getElementById('view-list');
-            container.innerHTML = '';
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
 
-            data.forEach(chamado => {
-                let extraHtml = '';
-                if (chamado.valor_compra || chamado.data_compra) {
-                    extraHtml = `
-                        <p><strong>Valor da Compra:</strong> ${chamado.valor_compra || 'N/A'}</p>
-                        <p><strong>Data da Compra:</strong> ${chamado.data_compra || 'N/A'}</p>
-                    `;
-                }
+        // Tabs
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('aba-' + tab).classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('active');
+            if (tab === 'lista') listarChamados();
+            if (tab === 'admin') listarAdmin();
+        }
 
-                const div = document.createElement('div');
-                div.className = 'chamado-view';
-                div.innerHTML = `
-                    <h4>${chamado.titulo}</h4>
-                    <p><strong>Solicitante:</strong> ${chamado.solicitante}</p>
-                    <p><strong>Local:</strong> ${chamado.local}</p>
-                    <p><strong>Descrição:</strong> ${chamado.descricao || 'N/A'}</p>
-                    <p><strong>Status:</strong> <span style="color: #007bff; font-weight: bold;">${chamado.status}</span></p>
-                    ${extraHtml}
-                    <small>Criado em: ${new Date(chamado.created_at).toLocaleString('pt-BR')}</small>
-                `;
-                container.appendChild(div);
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSolicitantes('solicitante');
+            populateSolicitantes('edit-solicitante');
+            forceUppercase('titulo');
+            forceUppercase('local');
+            forceUppercase('edit-titulo');
+            forceUppercase('edit-local');
+            document.getElementById('edit-valor').closest('input').style.display = 'none'; // Inicial hide
+            document.getElementById('edit-data').closest('input').style.display = 'none';
+            listarChamados();
+
+            // Realtime
+            supabase
+                .channel('chamados')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'chamados' }, () => {
+                    listarChamados();
+                    listarAdmin();
+                })
+                .subscribe();
+
+            // Fechar modal clicando fora
+            document.getElementById('edit-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'edit-modal') closeModal();
             });
-        };
+        });
     </script>
 </body>
 </html>
