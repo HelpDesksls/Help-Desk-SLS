@@ -4,171 +4,620 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Reclamações</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta name="theme-color" content="#25d366">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="bg-light">
-    <div class="container my-5">
-        <!-- Formulário de Novo Chamado -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-6">
-                <div class="card shadow-lg border-0">
-                    <div class="card-header bg-primary text-white text-center py-4">
-                        <h3 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Novo Chamado</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <form id="newTicketForm">
-                            <div class="mb-4">
-                                <label for="title" class="form-label fw-bold">Título *</label>
-                                <input type="text" class="form-control form-control-lg" id="title" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="name" class="form-label fw-bold">Nome *</label>
-                                <select class="form-select form-select-lg" id="name" required>
-                                    <option value="">Selecione o militar...</option>
-                                    <option value="1º TEN MARCELO">1º TEN MARCELO</option>
-                                    <option value="1º SGT VICENTE">1º SGT VICENTE</option>
-                                    <option value="1º SGT DIEFERSON">1º SGT DIEFERSON</option>
-                                    <option value="1º SGT BATISTA">1º SGT BATISTA</option>
-                                    <option value="2º SGT ANDERSON">2º SGT ANDERSON</option>
-                                    <option value="2º SGT VINICIUS">2º SGT VINICIUS</option>
-                                    <option value="2º SGT LISCANO">2º SGT LISCANO</option>
-                                    <option value="SD TOMASCHEWSKI">SD TOMASCHEWSKI</option>
-                                    <option value="SD CAMACHO">SD CAMACHO</option>
-                                    <option value="SD ISQUIERDO">SD ISQUIERDO</option>
-                                    <option value="SD BORGES">SD BORGES</option>
-                                    <option value="SD BATISTA">SD BATISTA</option>
-                                    <option value="SD MAX">SD MAX</option>
-                                    <option value="SD WILLIAM">SD WILLIAM</option>
-                                    <option value="SD MOTTA">SD MOTTA</option>
-                                    <option value="SD SOARES">SD SOARES</option>
-                                    <option value="SD PEGLOW">SD PEGLOW</option>
-                                    <option value="SD LARSSON">SD LARSSON</option>
-                                    <option value="NÃO IDENTIFICADO">NÃO IDENTIFICADO</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="local" class="form-label fw-bold">Local *</label>
-                                <input type="text" class="form-control form-control-lg" id="local" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="description" class="form-label fw-bold">Descrição</label>
-                                <textarea class="form-control" id="description" rows="4" placeholder="Descreva o problema (opcional)"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow">
-                                <i class="bi bi-send me-2"></i>Criar Chamado
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="my-5">
-
-        <!-- Lista de Chamados -->
-        <h2 class="text-center mb-5 text-primary fw-bold">Chamados Recentes</h2>
-        <div id="ticketsContainer" class="row g-4"></div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        // Configuração do Supabase - SUBSTITUA pelos seus valores
-        const supabaseUrl = 'https://your-project.supabase.co';
-        const supabaseKey = 'your-anon-key';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        const form = document.getElementById('newTicketForm');
-
-        async function createTicket(e) {
-            e.preventDefault();
-
-            const title = document.getElementById('title').value.toUpperCase().trim();
-            const name = document.getElementById('name').value.toUpperCase().trim();
-            const local = document.getElementById('local').value.toUpperCase().trim();
-            const description = document.getElementById('description').value.trim();
-
-            // Validação apenas para campos obrigatórios
-            if (!title || !name || !local) {
-                alert('Por favor, preencha Título, Nome e Local.');
-                return;
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #efeae2;
+            color: #111;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 260px;
+            background: #075e54;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+        .header {
+            background: #128c7e;
+            padding: 1rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+        .menu-icon {
+            font-size: 1.5em;
+            cursor: pointer;
+            display: none;
+        }
+        .tabs {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        .tab {
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #0b5345;
+            font-size: 1.1em;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .tab.active {
+            background: #25d366;
+        }
+        .main {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #25d366;
+            box-shadow: 0 0 0 2px rgba(37,211,102,0.2);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            text-transform: none;
+        }
+        .btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: #128c7e;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+        .btn-close:hover {
+            color: #333;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+        }
+        .stat-card h3 {
+            font-size: 2em;
+            color: #25d366;
+        }
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filters input, .filters select {
+            flex: 1;
+            min-width: 150px;
+        }
+        .list {
+            flex: 1;
+            max-height: 60vh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .chamado-card h3 {
+            margin-bottom: 0.5rem;
+            color: #075e54;
+        }
+        .chamado-card p {
+            margin-bottom: 0.25rem;
+        }
+        .status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+        }
+        .status.aberto { background: #ff9800; }
+        .status.em-andamento { background: #2196f3; }
+        .status.concluido { background: #4caf50; }
+        .actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .actions button {
+            flex: 1;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .menu-icon {
+                display: block;
             }
-
-            const { error } = await supabase
-                .from('chamados')
-                .insert([
-                    {
-                        titulo: title,
-                        nome: name,
-                        local: local,
-                        descricao: description || null
-                    }
-                ]);
-
-            if (error) {
-                console.error('Erro:', error);
-                alert('Erro ao criar chamado: ' + error.message);
-            } else {
-                form.reset();
-                loadTickets();
-                alert('Chamado criado com sucesso!');
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 100;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            body {
+                flex-direction: column;
+            }
+            .main {
+                width: 100%;
+                padding: 0.5rem;
             }
         }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="header">
+            <span>Central de Reclamações</span>
+        </div>
+        <div class="tabs">
+            <div class="tab active" data-tab="home" onclick="switchTab('home')">📋 Início</div>
+            <div class="tab" data-tab="admin" onclick="switchTab('admin')">🔧 Admin</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="header">
+            <span class="menu-icon" onclick="toggleSidebar()">☰</span>
+            <span>🛠️ Central de Reclamações</span>
+            <button class="btn" onclick="openNew()">+ Nova Reclamação</button>
+        </div>
+        <div id="home-content" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card card">
+                    <h3 id="stat-total">0</h3>
+                    <p>Total</p>
+                </div>
+                <div class="stat-card card">
+                    <h3 id="stat-aberto">0</h3>
+                    <p>Aberto</p>
+                </div>
+                <div class="stat-card card">
+                    <h3 id="stat-emandamento">0</h3>
+                    <p>Em Andamento</p>
+                </div>
+                <div class="stat-card card">
+                    <h3 id="stat-concluido">0</h3>
+                    <p>Concluído</p>
+                </div>
+            </div>
+            <div class="filters card">
+                <input type="text" id="home-search" placeholder="Buscar por título ou nome..." oninput="renderHome()">
+                <select id="home-status" onchange="renderHome()">
+                    <option value="todos">Todos Status</option>
+                    <option value="Aberto">Aberto</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                </select>
+            </div>
+            <div class="list" id="home-list"></div>
+        </div>
+        <div id="admin-content" class="tab-content">
+            <div class="filters card">
+                <input type="text" id="admin-search" placeholder="Buscar por título ou nome..." oninput="renderAdmin()">
+                <select id="admin-status" onchange="renderAdmin()">
+                    <option value="todos">Todos Status</option>
+                    <option value="Aberto">Aberto</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                </select>
+            </div>
+            <div class="list" id="admin-list"></div>
+        </div>
+    </div>
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <h2 id="modal-title">Nova Reclamação</h2>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="reclamacao-form">
+                <div class="form-group">
+                    <label>Título *</label>
+                    <input type="text" id="titulo" required oninput="handleUpper(this)">
+                </div>
+                <div class="form-group">
+                    <label>Nome do Solicitante *</label>
+                    <select id="nome_solicitante" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Matrícula/ID Func. (opcional)</label>
+                    <input type="text" id="matricula" oninput="handleUpper(this)">
+                </div>
+                <div class="form-group">
+                    <label>Local *</label>
+                    <input type="text" id="local" required oninput="handleUpper(this)">
+                </div>
+                <div class="form-group">
+                    <label>Descrição (opcional)</label>
+                    <textarea id="descricao"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Setor</label>
+                    <input type="text" id="setor" value="B4" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <select id="prioridade" disabled>
+                        <option>Média</option>
+                    </select>
+                </div>
+                <div id="edit-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="status">
+                            <option>Aberto</option>
+                            <option>Em Andamento</option>
+                            <option>Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridade (editável)</label>
+                        <select id="prioridade_edit">
+                            <option>Baixa</option>
+                            <option>Média</option>
+                            <option>Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" step="0.01" id="valor" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Data da Compra</label>
+                        <input type="date" id="data_compra">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Configuração Supabase - SUBSTITUA PELOS SEUS DADOS
+        const supabaseUrl = 'https://SEU-PROJETO.supabase.co';
+        const supabaseAnonKey = 'SUA-CHAVE-ANON';
+        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        async function loadTickets() {
+        const responsaveis = [
+            'SGT JOÃO SILVA',
+            'CB MARIA SANTOS',
+            'CAP PEDRO OLIVEIRA',
+            'SD ANA COSTA',
+            'SGT CARLOS MENDES',
+            'CB LUCAS PEREIRA'
+        ];
+
+        let chamados = [];
+        let currentEditId = null;
+
+        function handleUpper(el) {
+            el.value = el.value.toUpperCase();
+        }
+
+        function timeAgo(dateStr) {
+            const now = new Date();
+            const date = new Date(dateStr);
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            if (minutes < 1) return 'Agora';
+            if (minutes < 60) return `${minutes}m`;
+            const hours = Math.floor(minutes / 60);
+            return `${hours}h`;
+        }
+
+        function getStatusClass(status) {
+            const lower = status.toLowerCase().replace(/\s+/g, '-');
+            return lower === 'em-andamento' ? 'em-andamento' : lower;
+        }
+
+        function createChamadoCard(c, showActions = false) {
+            const div = document.createElement('div');
+            div.className = 'chamado-card card';
+            div.style.position = 'relative';
+            let valorHtml = '';
+            if (c.valor != null && c.valor !== '') {
+                valorHtml = `<p><strong>Valor:</strong> R$ ${Number(c.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+            }
+            let dataHtml = '';
+            if (c.data_compra) {
+                dataHtml = `<p><strong>Data Compra:</strong> ${new Date(c.data_compra).toLocaleDateString('pt-BR')}</p>`;
+            }
+            let html = `
+                <h3>${c.titulo}</h3>
+                ${c.descricao ? `<p>${c.descricao}</p>` : ''}
+                <p><strong>Nome:</strong> ${c.nome_solicitante}</p>
+                ${c.matricula ? `<p><strong>Matrícula:</strong> ${c.matricula}</p>` : ''}
+                <p><strong>Local:</strong> ${c.local}</p>
+                <p><strong>Setor:</strong> ${c.setor || 'B4'}</p>
+                <p><strong>Prioridade:</strong> ${c.prioridade || 'Média'}</p>
+                ${valorHtml}
+                ${dataHtml}
+                <p><strong>Há:</strong> ${timeAgo(c.created_at)}</p>
+                <span class="status ${getStatusClass(c.status)}">${c.status}</span>
+            `;
+            if (showActions) {
+                html += `
+                    <div class="actions">
+                        <button class="btn" onclick="editChamado('${c.id}')">Editar</button>
+                        <button class="btn btn-secondary" onclick="deleteChamado('${c.id}')">Excluir</button>
+                    </div>
+                `;
+            }
+            div.innerHTML = html;
+            return div;
+        }
+
+        async function loadChamados() {
             const { data, error } = await supabase
                 .from('chamados')
                 .select('*')
                 .order('created_at', { ascending: false });
-
             if (error) {
-                console.error('Erro ao carregar chamados:', error);
+                console.error('Erro ao carregar:', error);
                 return;
             }
-
-            const container = document.getElementById('ticketsContainer');
-            if (data.length === 0) {
-                container.innerHTML = '<div class="col-12"><div class="text-center py-5"><h5 class="text-muted">Nenhum chamado registrado ainda.</h5></div></div>';
-                return;
-            }
-
-            container.innerHTML = data.map(ticket => `
-                <div class="col-lg-6 col-xl-4">
-                    <div class="card h-100 shadow-sm border-0 hover-shadow">
-                        <div class="card-header bg-info text-white py-3">
-                            <h6 class="mb-0 fw-bold">${ticket.titulo}</h6>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <p class="card-text"><strong>Nome:</strong> ${ticket.nome}</p>
-                            <p class="card-text"><strong>Local:</strong> ${ticket.local}</p>
-                            ${ticket.descricao ? `<p class="card-text"><strong>Descrição:</strong> ${ticket.descricao}</p>` : ''}
-                            <p class="card-text mt-auto small text-muted">Criado em: ${new Date(ticket.created_at).toLocaleString('pt-BR')}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            chamados = data || [];
+            updateStats();
+            renderHome();
+            renderAdmin();
         }
 
-        // Eventos
-        form.addEventListener('submit', createTicket);
-        loadTickets();
+        function updateStats() {
+            document.getElementById('stat-total').textContent = chamados.length;
+            document.getElementById('stat-aberto').textContent = chamados.filter(c => c.status === 'Aberto').length;
+            document.getElementById('stat-emandamento').textContent = chamados.filter(c => c.status === 'Em Andamento').length;
+            document.getElementById('stat-concluido').textContent = chamados.filter(c => c.status === 'Concluído').length;
+        }
 
-        // Estilo hover simples
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', () => card.style.boxShadow = '0 0.5rem 1rem rgba(0,0,0,.15)');
-                card.addEventListener('mouseleave', () => card.style.boxShadow = '0 0.125rem 0.25rem rgba(0,0,0,.075)');
+        function renderHome() {
+            const search = document.getElementById('home-search').value.toLowerCase();
+            const statusF = document.getElementById('home-status').value;
+            const lista = chamados.filter(c =>
+                (c.titulo?.toLowerCase().includes(search) || c.nome_solicitante?.toLowerCase().includes(search)) &&
+                (statusF === 'todos' || c.status === statusF)
+            );
+            const container = document.getElementById('home-list');
+            container.innerHTML = '';
+            lista.forEach(c => container.appendChild(createChamadoCard(c, false)));
+        }
+
+        function renderAdmin() {
+            const search = document.getElementById('admin-search').value.toLowerCase();
+            const statusF = document.getElementById('admin-status').value;
+            const lista = chamados.filter(c =>
+                (c.titulo?.toLowerCase().includes(search) || c.nome_solicitante?.toLowerCase().includes(search)) &&
+                (statusF === 'todos' || c.status === statusF)
+            );
+            const container = document.getElementById('admin-list');
+            container.innerHTML = '';
+            lista.forEach(c => container.appendChild(createChamadoCard(c, true)));
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-content').classList.add('active');
+            document.getElementById('sidebar').classList.remove('open');
+            if (tabName === 'home') renderHome();
+            else if (tabName === 'admin') renderAdmin();
+        }
+
+        function populateSelect() {
+            const select = document.getElementById('nome_solicitante');
+            responsaveis.forEach(nome => {
+                const option = new Option(nome, nome);
+                select.appendChild(option);
             });
+            const naoIdentificado = new Option('NÃO IDENTIFICADO', 'NÃO IDENTIFICADO');
+            naoIdentificado.selected = true;
+            select.appendChild(naoIdentificado);
+        }
+
+        function openModal() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            currentEditId = null;
+            document.getElementById('reclamacao-form').reset();
+        }
+
+        function openNew() {
+            currentEditId = null;
+            document.getElementById('modal-title').textContent = 'Nova Reclamação';
+            document.getElementById('edit-fields').style.display = 'none';
+            document.getElementById('setor').value = 'B4';
+            document.getElementById('prioridade').value = 'Média';
+            document.getElementById('nome_solicitante').value = 'NÃO IDENTIFICADO';
+            openModal();
+        }
+
+        function editChamado(id) {
+            const chamado = chamados.find(c => c.id === id);
+            if (!chamado) return;
+            currentEditId = id;
+            document.getElementById('modal-title').textContent = 'Editar Reclamação';
+            document.getElementById('edit-fields').style.display = 'block';
+            document.getElementById('titulo').value = chamado.titulo || '';
+            document.getElementById('nome_solicitante').value = chamado.nome_solicitante || 'NÃO IDENTIFICADO';
+            document.getElementById('matricula').value = chamado.matricula || '';
+            document.getElementById('local').value = chamado.local || '';
+            document.getElementById('descricao').value = chamado.descricao || '';
+            document.getElementById('setor').value = chamado.setor || 'B4';
+            document.getElementById('prioridade_edit').value = chamado.prioridade || 'Média';
+            document.getElementById('status').value = chamado.status || 'Aberto';
+            document.getElementById('valor').value = chamado.valor || '';
+            document.getElementById('data_compra').value = chamado.data_compra ? new Date(chamado.data_compra).toISOString().split('T')[0] : '';
+            openModal();
+        }
+
+        async function deleteChamado(id) {
+            if (!confirm('Tem certeza que deseja excluir esta reclamação?')) return;
+            const { error } = await supabase.from('chamados').delete().eq('id', id);
+            if (error) {
+                alert('Erro ao excluir: ' + error.message);
+            } else {
+                loadChamados();
+            }
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            const data = {
+                titulo: document.getElementById('titulo').value.toUpperCase().trim(),
+                nome_solicitante: document.getElementById('nome_solicitante').value,
+                matricula: document.getElementById('matricula').value.trim() || null,
+                local: document.getElementById('local').value.toUpperCase().trim(),
+                descricao: document.getElementById('descricao').value.trim() || null,
+                setor: document.getElementById('setor').value.toUpperCase().trim(),
+                prioridade: currentEditId ? document.getElementById('prioridade_edit').value : document.getElementById('prioridade').value,
+                status: currentEditId ? document.getElementById('status').value : 'Aberto'
+            };
+            if (currentEditId) {
+                data.valor = document.getElementById('valor').value || null;
+                data.data_compra = document.getElementById('data_compra').value || null;
+                let { error } = await supabase.from('chamados').update(data).eq('id', currentEditId);
+                if (error && error.message.includes('column')) {
+                    console.warn('Campos novos não existem, atualizando sem eles');
+                    const { valor, data_compra, ...basicData } = data;
+                    ({ error } = await supabase.from('chamados').update(basicData).eq('id', currentEditId));
+                }
+                if (error) {
+                    alert('Erro ao atualizar: ' + error.message);
+                    return;
+                }
+            } else {
+                const { error } = await supabase.from('chamados').insert([data]);
+                if (error) {
+                    alert('Erro ao salvar: ' + error.message);
+                    return;
+                }
+            }
+            closeModal();
+            loadChamados();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Inicialização
+        window.addEventListener('load', () => {
+            populateSelect();
+            document.getElementById('reclamacao-form').addEventListener('submit', submitForm);
+            loadChamados();
+            renderHome();
         });
+
+        // PWA básico
+        if ('serviceWorker' in navigator) {
+            // navigator.serviceWorker.register('/sw.js');
+        }
     </script>
-    <style>
-        .hover-shadow {
-            transition: box-shadow 0.3s ease;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-    </style>
 </body>
 </html>
