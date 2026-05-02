@@ -1562,38 +1562,61 @@ if (elQtd) elQtd.textContent = compras.length
           ${c.observacao_admin ? `<div class="obs-box"><strong>Observação da triagem:</strong><br>${escapeHtml(c.observacao_admin)}</div>` : ''}
           ${c.justificativa_negativa ? `<div class="neg-box"><strong>Justificativa da negativa:</strong><br>${escapeHtml(c.justificativa_negativa)}</div>` : ''}
 
-          ${adminMode ? `
-            <div class="admin-area">
-              <div class="chip">🏢 Setor fixo: B4</div>
+        ${adminMode ? `
+  <div class="admin-area">
+    <div class="chip">🏢 Setor fixo: B4</div>
 
-              <select data-status-select="${escapeHtml(c.id)}" onchange="handleStatusChange('${c.id}', this)">
-                <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
-                <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
-                <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-                <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
-              </select>
+    <!-- STATUS -->
+    <label>Status</label>
+    <select data-status-select="${escapeHtml(c.id)}">
+      <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
+      <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
+      <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+      <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+      <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
+    </select>
 
-              ${purchaseFieldsHTML(c)}
+    <!-- CAMPOS DE COMPRA -->
+    ${purchaseFieldsHTML(c)}
 
-              <select onchange="alterarPrioridade('${c.id}', this.value)">
-                <option value="Baixa" ${c.prioridade === 'Baixa' ? 'selected' : ''}>Prioridade: Baixa</option>
-                <option value="Média" ${c.prioridade === 'Média' ? 'selected' : ''}>Prioridade: Média</option>
-                <option value="Alta" ${c.prioridade === 'Alta' ? 'selected' : ''}>Prioridade: Alta</option>
-              </select>
+    <!-- PRIORIDADE -->
+    <label>Prioridade</label>
+    <select data-prioridade-select="${escapeHtml(c.id)}">
+      <option value="Baixa" ${c.prioridade === 'Baixa' ? 'selected' : ''}>Baixa</option>
+      <option value="Média" ${c.prioridade === 'Média' ? 'selected' : ''}>Média</option>
+      <option value="Alta" ${c.prioridade === 'Alta' ? 'selected' : ''}>Alta</option>
+    </select>
 
-              <select onchange="alterarResponsavel('${c.id}', this.value)">
-                ${responsavelOptions(c.responsavel_designado || '')}
-              </select>
+    <!-- RESPONSÁVEL -->
+    <label>Responsável</label>
+    <select data-responsavel-select="${escapeHtml(c.id)}">
+      ${responsavelOptions(c.responsavel_designado || '')}
+    </select>
 
-              <textarea onblur="alterarObservacao('${c.id}', this.value)" placeholder="Observações da triagem">${escapeHtml(c.observacao_admin || '')}</textarea>
-              <textarea onblur="alterarJustificativaNegativa('${c.id}', this.value)" placeholder="Justificativa da negativa">${escapeHtml(c.justificativa_negativa || '')}</textarea>
-              <button type="button" class="btn-danger" onclick="negarChamado('${c.id}')">Negar chamado</button>
-            </div>
-          ` : ''}
-        </div>
-      `
-    }
+    <!-- OBS -->
+    <label>Observações</label>
+    <textarea id="obs-${c.id}" placeholder="Observações da triagem">${escapeHtml(c.observacao_admin || '')}</textarea>
+
+    <!-- NEGATIVA -->
+    <label>Justificativa da negativa</label>
+    <textarea id="neg-${c.id}" placeholder="Obrigatório para negar">${escapeHtml(c.justificativa_negativa || '')}</textarea>
+
+    <!-- AÇÕES -->
+    <div class="actions">
+      <button type="button" class="btn-success" onclick="salvarAlteracoes('${c.id}')">
+        💾 Salvar alterações
+      </button>
+
+      <button type="button" class="btn-danger" onclick="negarChamado('${c.id}')">
+        ⛔ Negar chamado
+      </button>
+    </div>
+  </div>
+` : ''}
+
+      </div>
+    `
+}
 
     function buildHomeItemHTML(c) {
   const tempo = getTempoChamado(c)
