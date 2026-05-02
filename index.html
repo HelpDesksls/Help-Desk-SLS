@@ -2170,6 +2170,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // 🔐 LOGIN (PASSO 1.1)
+// 🔐 LOGIN CORRIGIDO
 async function loginPorIdFunc() {
   const idFunc = document.getElementById('login-id-func').value.trim()
 
@@ -2178,20 +2179,26 @@ async function loginPorIdFunc() {
     return
   }
 
+  console.log('Buscando usuário:', idFunc)
+
   const { data, error } = await supabase
     .from('usuarios')
     .select('*')
-    .eq('id_func', idFunc) // 🔥 STRING
-    .maybeSingle()         // 🔥 NÃO QUEBRA SE NÃO ACHAR
+    .eq('id_func', String(idFunc)) // 🔥 GARANTE STRING
+    .limit(1)
 
-  if (error || !data) {
+  console.log('Resultado:', data, error)
+
+  if (error || !data || data.length === 0) {
     alert('Usuário não encontrado')
     return
   }
 
-  usuarioLogado = data
+  const usuario = data[0]
 
-  localStorage.setItem('usuarioLogado', JSON.stringify(data))
+  usuarioLogado = usuario
+
+  localStorage.setItem('usuarioLogado', JSON.stringify(usuario))
 
   document.getElementById('tela-login').classList.add('hidden')
   document.getElementById('app').classList.remove('hidden')
