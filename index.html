@@ -1215,7 +1215,7 @@
       if (horas > 0 || dias > 0) partes.push(`${horas}h`)
       partes.push(`${minutos}min`)
 
-      return partes.join(' ')
+     return partes.join(' ')
     }
 
     function getTempoChamado(c) {
@@ -1241,7 +1241,17 @@
       }
     }
 
+    // 🔥 ADICIONE ISSO LOGO ABAIXO (ESSENCIAL)
+    function buildTimerHTML(c) {
+      const tempo = getTempoChamado(c)
 
+      return `
+        <div class="timer-box ${tempo.classe}">
+          <div class="timer-label">${tempo.label}</div>
+          <div class="timer-value" data-timer-card="${escapeHtml(c.id)}">${tempo.valor}</div>
+        </div>
+      `
+    }
     function atualizarBotaoInstalarApp() {
       const btn = $('btnInstalarApp')
       if (!btn) return
