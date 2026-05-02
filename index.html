@@ -1080,14 +1080,17 @@
     <button data-screen="chamados">📋<br>Chamados</button>
     <button data-screen="compras">🛒<br>Compras</button>
     <button data-screen="perfil">👤<br>Perfil</button>
-  </nav>
+ </nav>
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-    const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
-    const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
-    const ADMIN_PASSWORD = '123456'
+  const SUPABASE_URL = 'https://azltlpjyyqecurmebffm.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_ODDfIVnGOb1csV9DA8kURQ_pbKPeQNO'
+  const ADMIN_PASSWORD = '123456'
+
+  // 🔥 ESSA LINHA RESOLVE SEU PROBLEMA
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
     const RESPONSAVEIS = [
       '1º TEN MARCELO',
