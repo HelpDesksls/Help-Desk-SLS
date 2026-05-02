@@ -2045,18 +2045,39 @@ if ($('titulo')) $('titulo').addEventListener('input', forceUppercaseField)
 if ($('local')) $('local').addEventListener('input', forceUppercaseField)
 
    
-    window.alterarStatus = alterarStatus
-    window.handleStatusChange = handleStatusChange
-    window.alterarPrioridade = alterarPrioridade
-    window.alterarResponsavel = alterarResponsavel
-    window.alterarObservacao = alterarObservacao
-    window.alterarJustificativaNegativa = alterarJustificativaNegativa
-    window.alterarValorCompra = alterarValorCompra
-    window.alterarDataCompra = alterarDataCompra
-    window.negarChamado = negarChamado
-    window.toggleHomeDetails = toggleHomeDetails
-    window.toggleAllHomeItems = toggleAllHomeItems
+   window.alterarStatus = alterarStatus
+window.handleStatusChange = handleStatusChange
+window.alterarPrioridade = alterarPrioridade
+window.alterarResponsavel = alterarResponsavel
+window.alterarObservacao = alterarObservacao
+window.alterarJustificativaNegativa = alterarJustificativaNegativa
+window.alterarValorCompra = alterarValorCompra
+window.alterarDataCompra = alterarDataCompra
+window.negarChamado = negarChamado
+window.toggleHomeDetails = toggleHomeDetails
+window.toggleAllHomeItems = toggleAllHomeItems
 
+function salvarAlteracoes(id) {
+  if (!adminMode) return
+
+  const status = document.querySelector(`[data-status-select="${id}"]`)?.value
+  const prioridade = document.querySelector(`[data-prioridade-select="${id}"]`)?.value
+  const responsavel = document.querySelector(`[data-responsavel-select="${id}"]`)?.value
+
+  const obs = document.getElementById(`obs-${id}`)?.value || ''
+  const neg = document.getElementById(`neg-${id}`)?.value || ''
+
+  Promise.all([
+    alterarStatus(id, status),
+    alterarPrioridade(id, prioridade),
+    alterarResponsavel(id, responsavel),
+    alterarObservacao(id, obs),
+    alterarJustificativaNegativa(id, neg)
+  ])
+}
+
+// 🔥 ESSA LINHA RESOLVE O ERRO
+window.salvarAlteracoes = salvarAlteracoes
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault()
