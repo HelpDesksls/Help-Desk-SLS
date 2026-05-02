@@ -2156,23 +2156,38 @@ window.salvarAlteracoes = salvarAlteracoes
   w.print()
 }
 
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null
-      atualizarBotaoInstalarApp()
-      showMessage('App instalado com sucesso.', 'ok')
-    })
+   window.addEventListener('appinstalled', () => {
+  deferredPrompt = null
+  atualizarBotaoInstalarApp()
+  showMessage('App instalado com sucesso.', 'ok')
+})
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {})
-      })
-    }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {})
+  })
+}
 
-    populateMilitarOptions()
-    updateAdminUI()
-    carregarUsuarioLocal()
-    limparFiltros()
-    loadTickets(false)
-  </script>
+// 🔐 LOGIN (PASSO 1.1)
+function loginPorIdFunc() {
+  const idFunc = document.getElementById('login-id-func').value.trim()
+
+  if (!idFunc) {
+    alert('Informe o ID Funcional')
+    return
+  }
+
+  alert('Login capturado: ' + idFunc)
+}
+
+// 🔥 TORNA GLOBAL
+window.loginPorIdFunc = loginPorIdFunc
+
+populateMilitarOptions()
+updateAdminUI()
+carregarUsuarioLocal()
+limparFiltros()
+loadTickets(false)
+</script>
 </body>
 </html>
