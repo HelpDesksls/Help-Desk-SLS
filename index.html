@@ -2181,29 +2181,40 @@ async function loginPorIdFunc() {
     .from('usuarios')
     .select('*')
     .eq('id_func', idFunc)
-    .single()
+    .maybeSingle() // 🔥 CORREÇÃO PRINCIPAL
 
-  if (error || !data) {
+  if (error) {
+    console.error('Erro Supabase:', error)
+    alert('Erro ao consultar usuário')
+    return
+  }
+
+  if (!data) {
     alert('Usuário não encontrado')
     return
   }
 
+  // 🔥 SALVA USUÁRIO
   usuarioLogado = data
-
   localStorage.setItem('usuarioLogado', JSON.stringify(data))
 
+  // 🔥 TROCA DE TELA
   document.getElementById('tela-login').classList.add('hidden')
   document.getElementById('app').classList.remove('hidden')
+
+  // 🔥 OPCIONAL: MOSTRAR NOME NO TOPO
+  const elNome = document.getElementById('nomeUsuarioTopo')
+  if (elNome) elNome.innerText = data.nome
+
+  console.log('Login OK:', data)
 
   loadTickets()
 }
 
-// manter isso
+// 🔥 TORNA GLOBAL (UMA VEZ SÓ)
 window.loginPorIdFunc = loginPorIdFunc
 
-// 🔥 TORNA GLOBAL
-window.loginPorIdFunc = loginPorIdFunc
-
+// 🔄 INICIALIZAÇÃO
 populateMilitarOptions()
 updateAdminUI()
 carregarUsuarioLocal()
