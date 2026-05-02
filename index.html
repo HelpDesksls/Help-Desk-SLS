@@ -1503,34 +1503,35 @@ if (elTotal) elTotal.textContent = formatCurrency(totalCompras)
 if (elQtd) elQtd.textContent = compras.length
     }
 
-    function responsavelOptions(selectedValue = '') {
-      const first = `<option value="" ${!selectedValue ? 'selected' : ''}>Responsável: Não definido</option>`
-      const others = RESPONSAVEIS.map(nome => `
-        <option value="${escapeHtml(nome)}" ${selectedValue === nome ? 'selected' : ''}>${escapeHtml(nome)}</option>
-      `).join('')
-      return first + others
-    }
+  function purchaseFieldsHTML(c) {
+  const status = String(c.status || '').trim()
 
-   function purchaseFieldsHTML(c) {
-  const status = String(c.status || '').trim().toLowerCase()
-
-  const hiddenClass = [
-    'encaminhado',
-    'em andamento',
-    'finalizado'
-  ].includes(status) ? '' : 'hidden'
+  const hiddenClass = shouldShowPurchaseFields(status) ? '' : 'hidden'
 
   return `
     <div class="admin-compra-fields ${hiddenClass}" data-compra-fields="${escapeHtml(c.id)}">
+      
       <label for="valor-compra-${escapeHtml(c.id)}">Valor da compra</label>
-      <input id="valor-compra-${escapeHtml(c.id)}" type="text" inputmode="decimal" value="${escapeHtml(c.valor_compra ?? '')}" onblur="alterarValorCompra('${c.id}', this.value)" placeholder="Ex: 150,00" />
+      <input 
+        id="valor-compra-${escapeHtml(c.id)}" 
+        type="text" 
+        inputmode="decimal" 
+        value="${escapeHtml(c.valor_compra ?? '')}" 
+        onblur="alterarValorCompra('${c.id}', this.value)" 
+        placeholder="Ex: 150,00"
+      />
 
       <label for="data-compra-${escapeHtml(c.id)}">Data da compra</label>
-      <input id="data-compra-${escapeHtml(c.id)}" type="date" value="${escapeHtml(formatDateForInput(c.data_compra))}" onblur="alterarDataCompra('${c.id}', this.value)" />
+      <input 
+        id="data-compra-${escapeHtml(c.id)}" 
+        type="date" 
+        value="${escapeHtml(formatDateForInput(c.data_compra))}" 
+        onblur="alterarDataCompra('${c.id}', this.value)" 
+      />
+
     </div>
   `
 }
-
     function buildTicketHTML(c) {
       const exibirCompraNaLista = shouldShowPurchaseFields(c.status) && (c.valor_compra !== null && c.valor_compra !== undefined && c.valor_compra !== '' || c.data_compra)
 
@@ -1573,18 +1574,21 @@ if (elQtd) elQtd.textContent = compras.length
   <div class="admin-area">
     <div class="chip">🏢 Setor fixo: B4</div>
 
-    <!-- STATUS -->
-    <label>Status</label>
-    <select data-status-select="${escapeHtml(c.id)}">
-      <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
-      <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
-      <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-      <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-      <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
-    </select>
+ <!-- STATUS -->
+<label>Status</label>
+<select 
+  data-status-select="${escapeHtml(c.id)}"
+  onchange="handleStatusChange('${escapeHtml(c.id)}', this)"
+>
+  <option value="Aguardando triagem" ${c.status === 'Aguardando triagem' ? 'selected' : ''}>Aguardando triagem</option>
+  <option value="Encaminhado" ${c.status === 'Encaminhado' ? 'selected' : ''}>Encaminhado</option>
+  <option value="Em andamento" ${c.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+  <option value="Finalizado" ${c.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+  <option value="Negado" ${c.status === 'Negado' ? 'selected' : ''}>Negado</option>
+</select>
 
-    <!-- CAMPOS DE COMPRA -->
-    ${purchaseFieldsHTML(c)}
+<!-- CAMPOS DE COMPRA -->
+${purchaseFieldsHTML(c)}
 
     <!-- PRIORIDADE -->
     <label>Prioridade</label>
