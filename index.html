@@ -860,9 +860,27 @@
       .toolbar { grid-template-columns: repeat(2, 1fr); }
       .tabbar { width: min(700px, calc(100% - 40px)); }
     }
-  </style>
+ </style>
 </head>
 <body>
+
+<!-- 🔐 LOGIN -->
+<div id="tela-login" style="padding:20px; max-width:400px; margin:40px auto; text-align:center;">
+  <h2>🔐 Acesso ao Sistema</h2>
+
+  <input 
+    type="text" 
+    id="login-id-func" 
+    placeholder="Digite seu ID Funcional"
+    style="width:100%; padding:12px; margin:15px 0;"
+  />
+
+  <button onclick="loginPorIdFunc()" style="width:100%; padding:12px;">
+    Entrar
+  </button>
+</div>
+
+<div id="app" class="hidden">
   <div class="app">
     <div class="topbar">
       <div class="wa-head">
