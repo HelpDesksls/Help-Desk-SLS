@@ -1490,9 +1490,10 @@ function formatCurrency(value) {
       `<option value="${escapeHtml(nome)}">${escapeHtml(nome)}</option>`
     ).join('')
 
-  if (nomesUsados.includes(atual)) filtro.value = atual
+ if (nomesUsados.includes(atual)) filtro.value = atual
 }
 
+// 🔥 CARREGAR CHAMADOS
 async function loadTickets(showToast = true) {
   try {
     const { data, error } = await supabase
@@ -1523,6 +1524,8 @@ async function loadTickets(showToast = true) {
   }
 }
 
+
+// 🔥 CRIAR CHAMADO
 async function createTicket() {
 
   // 🔒 OBRIGA LOGIN
@@ -1531,14 +1534,14 @@ async function createTicket() {
     return
   }
 
-  // 🔥 USA DADOS DO USUÁRIO LOGADO
-  const nome = usuarioLogado.nome.toUpperCase()
-  const matricula = usuarioLogado.id_func
+  // 🔥 USA DADOS DO USUÁRIO LOGADO (COM SEGURANÇA)
+  const nome = String(usuarioLogado.nome || '').toUpperCase()
+  const matricula = usuarioLogado.id_func || null
 
   const titulo = String($('titulo').value || '').trim().toUpperCase()
   const descricao = $('descricao').value.trim()
   const local = String($('local').value || '').trim().toUpperCase()
-  const tipo = String(document.getElementById('tipo').value).toLowerCase()
+  const tipo = String(document.getElementById('tipo').value || 'manutencao').toLowerCase()
 
   if (!titulo) {
     showMessage('Preencha o título do chamado.', 'erro')
@@ -1554,7 +1557,7 @@ async function createTicket() {
         titulo,
         descricao,
         local,
-        tipo: tipo,
+        tipo,
         prioridade: PRIORIDADE_PADRAO,
         status: 'Aguardando triagem',
         setor_responsavel: SETOR_FIXO,
@@ -1580,27 +1583,30 @@ async function createTicket() {
   }
 }
 
-    function updateStats() {
-      $('stTotal').textContent = chamados.length
-      $('stAguardando').textContent = chamados.filter(c => c.status === 'Aguardando triagem').length
-      $('stEncaminhado').textContent = chamados.filter(c => c.status === 'Encaminhado').length
-      $('stAndamento').textContent = chamados.filter(c => c.status === 'Em andamento').length
-      $('stFinalizado').textContent = chamados.filter(c => c.status === 'Finalizado').length
-      $('stNegado').textContent = chamados.filter(c => c.status === 'Negado').length
-      const compras = chamados.filter(c => Number(c.valor_compra) > 0)
 
-const totalCompras = compras.reduce((s, c) => s + Number(c.valor_compra || 0), 0)
+// 🔥 ATUALIZA ESTATÍSTICAS
+function updateStats() {
+  $('stTotal').textContent = chamados.length
+  $('stAguardando').textContent = chamados.filter(c => c.status === 'Aguardando triagem').length
+  $('stEncaminhado').textContent = chamados.filter(c => c.status === 'Encaminhado').length
+  $('stAndamento').textContent = chamados.filter(c => c.status === 'Em andamento').length
+  $('stFinalizado').textContent = chamados.filter(c => c.status === 'Finalizado').length
+  $('stNegado').textContent = chamados.filter(c => c.status === 'Negado').length
 
-const elTotal = document.getElementById('totalCompras')
-const elQtd = document.getElementById('qtdCompras')
+  const compras = chamados.filter(c => Number(c.valor_compra) > 0)
+  const totalCompras = compras.reduce((s, c) => s + Number(c.valor_compra || 0), 0)
 
-if (elTotal) elTotal.textContent = formatCurrency(totalCompras)
-if (elQtd) elQtd.textContent = compras.length
-    }
+  const elTotal = document.getElementById('totalCompras')
+  const elQtd = document.getElementById('qtdCompras')
 
- function purchaseFieldsHTML(c) {
+  if (elTotal) elTotal.textContent = formatCurrency(totalCompras)
+  if (elQtd) elQtd.textContent = compras.length
+}
+
+
+// 🔥 CAMPOS DE COMPRA
+function purchaseFieldsHTML(c) {
   const status = String(c.status || '').trim()
-
   const hiddenClass = shouldShowPurchaseFields(status) ? '' : 'hidden'
 
   return `
@@ -1628,6 +1634,8 @@ if (elQtd) elQtd.textContent = compras.length
   `
 }
 
+
+// 🔥 SELECT DE RESPONSÁVEL
 function responsavelOptions(selectedValue = '') {
   const first = `<option value="" ${!selectedValue ? 'selected' : ''}>Responsável: Não definido</option>`
 
@@ -1638,8 +1646,14 @@ function responsavelOptions(selectedValue = '') {
   return first + others
 }
 
-// 🔥 GARANTE ACESSO GLOBAL
+
+// 🔥 GARANTE ACESSO GLOBAL (EVITA ERROS NO HTML onclick)
+window.loadTickets = loadTickets
+window.createTicket = createTicket
 window.responsavelOptions = responsavelOptions
+window.loginPorIdFunc = loginPorIdFunc
+window.trocarAba = trocarAba
+window.logout = logout
 
 function buildTicketHTML(c) {
   const exibirCompraNaLista = shouldShowPurchaseFields(c.status) && (
